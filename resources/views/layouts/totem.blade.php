@@ -6,6 +6,111 @@
     <title>Senac Registro - Totem</title>
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1055;
+            display: none;
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            overflow-y: auto;
+            outline: 0;
+        }
+        .modal.show {
+            display: block;
+        }
+        .modal.fade .modal-dialog {
+            transform: translateY(-24px);
+            opacity: 0;
+            transition: transform .2s ease-out, opacity .2s ease-out;
+        }
+        .modal.show .modal-dialog {
+            transform: none;
+            opacity: 1;
+        }
+        .modal-dialog {
+            position: relative;
+            width: auto;
+            margin: 1.75rem auto;
+            max-width: 520px;
+            padding: 0 .75rem;
+        }
+        .modal-dialog-centered {
+            min-height: calc(100% - 3.5rem);
+            display: flex;
+            align-items: center;
+        }
+        .modal-content {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            border: 1px solid #dee2e6;
+            border-radius: .75rem;
+            background: #fff;
+            box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .2);
+        }
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .modal-title {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .modal-body {
+            position: relative;
+            flex: 1 1 auto;
+            padding: 1rem;
+        }
+        .btn-close {
+            box-sizing: content-box;
+            width: 1em;
+            height: 1em;
+            border: 0;
+            background: transparent;
+            border-radius: .375rem;
+            opacity: .5;
+            cursor: pointer;
+            padding: .25em;
+        }
+        .btn-close::before {
+            content: "\00d7";
+            font-size: 1.35rem;
+            line-height: 1;
+            color: #334155;
+        }
+        .btn-close:hover {
+            opacity: .8;
+        }
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1050;
+            width: 100vw;
+            height: 100vh;
+            background-color: #64748b;
+        }
+        .modal-backdrop.fade {
+            opacity: 0;
+            transition: opacity .15s linear;
+        }
+        .modal-backdrop.show {
+            opacity: .55;
+        }
+        body.modal-open {
+            overflow: hidden;
+        }
+    </style>
 </head>
 <body class="bg-slate-50 min-h-screen">
     <div class="min-h-screen flex flex-col">
@@ -38,8 +143,8 @@
                             <button type="submit" class="px-4 py-2 rounded-full bg-senac-orange text-white hover:bg-senac-orange/90 transition">Sair</button>
                         </form>
                     @else
-                        <a href="{{ route('login') }}" class="px-4 py-2 rounded-full bg-senac-orange text-white hover:bg-senac-orange/90 transition">Entrar</a>
-                        <a href="{{ route('register') }}" class="px-4 py-2 rounded-full border border-white text-white hover:bg-white/10 transition">Cadastrar</a>
+                        <button type="button" data-login-open class="px-4 py-2 rounded-full bg-senac-orange text-white hover:bg-senac-orange/90 transition">Entrar</button>
+                        <button type="button" data-register-open class="px-4 py-2 rounded-full border border-white text-white hover:bg-white/10 transition">Cadastrar</button>
                     @endauth
                 </nav>
             </div>
@@ -52,6 +157,160 @@
         <footer class="py-6 text-center text-xs text-slate-400">
             Toque para explorar. O totem volta automaticamente para a tela inicial em 45 segundos.
         </footer>
+
+        @guest
+            @php
+                $requestedModal = request()->query('modal');
+                $openRegisterModal = old('form_source') === 'register_modal'
+                    || $requestedModal === 'register'
+                    || $errors->has('name')
+                    || $errors->has('password_confirmation');
+                $openLoginModal = ! $openRegisterModal && (
+                    old('form_source') === 'login_modal'
+                    || $requestedModal === 'login'
+                    || $errors->has('email')
+                    || $errors->has('password')
+                );
+                $hasOpenModal = $openLoginModal || $openRegisterModal;
+            @endphp
+            <div
+                class="modal fade{{ $openLoginModal ? ' show' : '' }}"
+                id="loginModal"
+                tabindex="-1"
+                aria-labelledby="loginModalLabel"
+                aria-hidden="{{ $openLoginModal ? 'false' : 'true' }}"
+                style="{{ $openLoginModal ? 'display:block;' : 'display:none;' }}"
+            >
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title" id="loginModalLabel">Entrar no sistema</h1>
+                            <button type="button" class="btn-close" data-login-close aria-label="Close"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <p class="text-sm text-slate-500 mb-5">Use seu email e senha para acessar o painel.</p>
+
+                            @if (session('status'))
+                                <div class="mb-4 rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-3 text-emerald-700 text-sm">
+                                    {{ session('status') }}
+                                </div>
+                            @endif
+
+                            <form method="POST" action="{{ route('login') }}">
+                                @csrf
+                                <input type="hidden" name="form_source" value="login_modal">
+
+                                <div>
+                                    <label for="modal-email" class="text-sm font-semibold text-slate-700">Email</label>
+                                    <input id="modal-email" type="email" name="email" value="{{ old('email') }}" required autocomplete="username" class="mt-1 w-full rounded-xl border-slate-200">
+                                    @error('email')
+                                        <p class="mt-2 text-sm text-rose-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div class="mt-4">
+                                    <label for="modal-password" class="text-sm font-semibold text-slate-700">Senha</label>
+                                    <input id="modal-password" type="password" name="password" required autocomplete="current-password" class="mt-1 w-full rounded-xl border-slate-200">
+                                    @error('password')
+                                        <p class="mt-2 text-sm text-rose-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div class="mt-4 flex items-center gap-2">
+                                    <input id="modal-remember_me" type="checkbox" class="rounded border-slate-300 text-senac-orange shadow-sm focus:ring-senac-orange" name="remember">
+                                    <label for="modal-remember_me" class="text-sm text-slate-600">Lembrar-me</label>
+                                </div>
+
+                                <div class="mt-6 flex items-center justify-between gap-3">
+                                    <a href="{{ route('password.request') }}" class="underline text-sm text-slate-600 hover:text-senac-blue">Esqueci minha senha</a>
+                                    <button class="px-5 py-2 rounded-full bg-senac-orange text-white font-semibold hover:bg-senac-orange/90">Entrar</button>
+                                </div>
+
+                                <div class="mt-4 text-sm text-slate-600">
+                                    Ainda não tem conta?
+                                    <button type="button" data-register-open class="underline hover:text-senac-blue">Cadastrar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="modal fade{{ $openRegisterModal ? ' show' : '' }}"
+                id="registerModal"
+                tabindex="-1"
+                aria-labelledby="registerModalLabel"
+                aria-hidden="{{ $openRegisterModal ? 'false' : 'true' }}"
+                style="{{ $openRegisterModal ? 'display:block;' : 'display:none;' }}"
+            >
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title" id="registerModalLabel">Cadastro de aluno</h1>
+                            <button type="button" class="btn-close" data-register-close aria-label="Close"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <p class="text-sm text-slate-500 mb-5">Preencha os dados para criar sua conta no sistema.</p>
+
+                            <form method="POST" action="{{ route('register') }}">
+                                @csrf
+                                <input type="hidden" name="form_source" value="register_modal">
+
+                                <div>
+                                    <label for="modal-register-name" class="text-sm font-semibold text-slate-700">Nome</label>
+                                    <input id="modal-register-name" type="text" name="name" value="{{ old('name') }}" required autocomplete="name" class="mt-1 w-full rounded-xl border-slate-200">
+                                    @error('name')
+                                        <p class="mt-2 text-sm text-rose-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div class="mt-4">
+                                    <label for="modal-register-email" class="text-sm font-semibold text-slate-700">Email</label>
+                                    <input id="modal-register-email" type="email" name="email" value="{{ old('email') }}" required autocomplete="username" class="mt-1 w-full rounded-xl border-slate-200">
+                                    @error('email')
+                                        <p class="mt-2 text-sm text-rose-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div class="mt-4">
+                                    <label for="modal-register-password" class="text-sm font-semibold text-slate-700">Senha</label>
+                                    <input id="modal-register-password" type="password" name="password" required autocomplete="new-password" class="mt-1 w-full rounded-xl border-slate-200">
+                                    @error('password')
+                                        <p class="mt-2 text-sm text-rose-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div class="mt-4">
+                                    <label for="modal-register-password-confirmation" class="text-sm font-semibold text-slate-700">Confirmar senha</label>
+                                    <input id="modal-register-password-confirmation" type="password" name="password_confirmation" required autocomplete="new-password" class="mt-1 w-full rounded-xl border-slate-200">
+                                    @error('password_confirmation')
+                                        <p class="mt-2 text-sm text-rose-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div class="mt-6 flex items-center justify-end">
+                                    <button class="px-5 py-2 rounded-full bg-senac-orange text-white font-semibold hover:bg-senac-orange/90">Cadastrar</button>
+                                </div>
+
+                                <div class="mt-4 text-sm text-slate-600">
+                                    Já possui cadastro?
+                                    <button type="button" data-login-open class="underline hover:text-senac-blue">Entrar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="modal-backdrop fade{{ $hasOpenModal ? ' show' : '' }}"
+                id="globalModalBackdrop"
+                style="{{ $hasOpenModal ? 'display:block;' : 'display:none;' }}"
+            ></div>
+        @endguest
     </div>
 
     <script>
@@ -163,6 +422,83 @@
 
             setActive(0);
             restartTimer();
+        })();
+    </script>
+
+    <script>
+        (function () {
+            const modal = document.getElementById('loginModal');
+            const registerModal = document.getElementById('registerModal');
+            const backdrop = document.getElementById('globalModalBackdrop');
+            if (!modal || !registerModal || !backdrop) return;
+
+            const openButtons = document.querySelectorAll('[data-login-open]');
+            const registerOpenButtons = document.querySelectorAll('[data-register-open]');
+            const closeButtons = modal.querySelectorAll('[data-login-close]');
+            const registerCloseButtons = registerModal.querySelectorAll('[data-register-close]');
+            const firstInput = document.getElementById('modal-email');
+            const registerFirstInput = document.getElementById('modal-register-name');
+
+            const showElement = (el) => {
+                el.style.display = 'block';
+                requestAnimationFrame(() => el.classList.add('show'));
+            };
+
+            const hideElement = (el) => {
+                el.classList.remove('show');
+                setTimeout(() => {
+                    if (!el.classList.contains('show')) {
+                        el.style.display = 'none';
+                    }
+                }, 180);
+            };
+
+            const isAnyOpen = () => modal.classList.contains('show') || registerModal.classList.contains('show');
+
+            const openLoginModal = () => {
+                registerModal.classList.remove('show');
+                registerModal.style.display = 'none';
+                showElement(modal);
+                showElement(backdrop);
+                modal.setAttribute('aria-hidden', 'false');
+                registerModal.setAttribute('aria-hidden', 'true');
+                document.body.classList.add('modal-open');
+                setTimeout(() => firstInput?.focus(), 120);
+            };
+
+            const openRegisterModal = () => {
+                modal.classList.remove('show');
+                modal.style.display = 'none';
+                showElement(registerModal);
+                showElement(backdrop);
+                registerModal.setAttribute('aria-hidden', 'false');
+                modal.setAttribute('aria-hidden', 'true');
+                document.body.classList.add('modal-open');
+                setTimeout(() => registerFirstInput?.focus(), 120);
+            };
+
+            const closeAllModals = () => {
+                hideElement(modal);
+                hideElement(registerModal);
+                hideElement(backdrop);
+                modal.setAttribute('aria-hidden', 'true');
+                registerModal.setAttribute('aria-hidden', 'true');
+                document.body.classList.remove('modal-open');
+            };
+
+            openButtons.forEach((button) => button.addEventListener('click', openLoginModal));
+            registerOpenButtons.forEach((button) => button.addEventListener('click', openRegisterModal));
+            closeButtons.forEach((button) => button.addEventListener('click', closeAllModals));
+            registerCloseButtons.forEach((button) => button.addEventListener('click', closeAllModals));
+            backdrop.addEventListener('click', closeAllModals);
+
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && isAnyOpen()) closeAllModals();
+            });
+
+            if (isAnyOpen()) {
+                document.body.classList.add('modal-open');
+            }
         })();
     </script>
 </body>
