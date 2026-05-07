@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Totem;
 
 use App\Http\Controllers\Controller;
 use App\Models\Entrepreneur;
+use App\Support\UnitContext;
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Encoding\Encoding;
 
@@ -11,7 +12,9 @@ class EntrepreneurController extends Controller
 {
     public function index()
     {
+        $unitId = UnitContext::resolveTotemUnitId(request());
         $entrepreneurs = Entrepreneur::where('status', 'approved')
+            ->where('unidade_id', $unitId)
             ->with('images')
             ->latest()
             ->paginate(12);
@@ -21,7 +24,8 @@ class EntrepreneurController extends Controller
 
     public function show(Entrepreneur $entrepreneur)
     {
-        abort_unless($entrepreneur->status === 'approved', 404);
+        $unitId = UnitContext::resolveTotemUnitId(request());
+        abort_unless($entrepreneur->status === 'approved' && (int) $entrepreneur->unidade_id === (int) $unitId, 404);
 
         $entrepreneur->load('images');
 

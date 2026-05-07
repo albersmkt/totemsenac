@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Entrepreneur;
 use App\Models\EntrepreneurImage;
+use App\Support\UnitContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -18,8 +19,8 @@ class EntrepreneurController extends Controller
         $this->authorize('viewAny', Entrepreneur::class);
 
         $query = Entrepreneur::query()->with('creator');
-
-        if (! $request->user()->hasRole('super_admin')) {
+        UnitContext::applyAdminScope($query, $request->user(), $request);
+        if ($request->user()->hasRole('estudante') && ! $request->user()->hasAnyRole(['super_admin', 'admin_unidade'])) {
             $query->where('created_by', $request->user()->id);
         }
 
@@ -40,8 +41,10 @@ class EntrepreneurController extends Controller
         $this->authorize('create', Entrepreneur::class);
 
         $user = request()->user();
-        if ($user->hasRole('estudante') && ! $user->hasRole('super_admin')) {
-            $existing = Entrepreneur::where('created_by', $user->id)->first();
+        if ($user->hasRole('estudante') && ! $user->hasAnyRole(['super_admin', 'admin_unidade'])) {
+            $existing = Entrepreneur::where('created_by', $user->id)
+                ->where('unidade_id', $user->unidade_id)
+                ->first();
             if ($existing) {
                 return redirect()->route('admin.entrepreneurs.edit', $existing)
                     ->with('status', 'Voce ja possui um perfil. Edite os dados abaixo.');
@@ -59,8 +62,10 @@ class EntrepreneurController extends Controller
         $this->authorize('create', Entrepreneur::class);
 
         $user = $request->user();
-        if ($user->hasRole('estudante') && ! $user->hasRole('super_admin')) {
-            $existing = Entrepreneur::where('created_by', $user->id)->first();
+        if ($user->hasRole('estudante') && ! $user->hasAnyRole(['super_admin', 'admin_unidade'])) {
+            $existing = Entrepreneur::where('created_by', $user->id)
+                ->where('unidade_id', $user->unidade_id)
+                ->first();
             if ($existing) {
                 return redirect()->route('admin.entrepreneurs.edit', $existing)
                     ->with('status', 'Voce ja possui um perfil. Edite os dados abaixo.');
@@ -79,7 +84,9 @@ class EntrepreneurController extends Controller
         ]);
 
         $data['created_by'] = $request->user()->id;
-        if (! $request->user()->hasRole('super_admin')) {
+        $canManageStatus = $request->user()->hasAnyRole(['super_admin', 'admin_unidade']);
+        $data['unidade_id'] = UnitContext::resolveCreationUnitId($request->user(), $request);
+        if (! $canManageStatus) {
             $data['status'] = 'pending';
         } else {
             $data['status'] = $data['status'] ?? 'pending';
@@ -135,7 +142,8 @@ class EntrepreneurController extends Controller
             'remove_images.*' => 'integer|exists:entrepreneur_images,id',
         ]);
 
-        if (! $request->user()->hasRole('super_admin')) {
+        $canManageStatus = $request->user()->hasAnyRole(['super_admin', 'admin_unidade']);
+        if (! $canManageStatus) {
             $data['status'] = $entrepreneur->status;
         } else {
             $data['status'] = $data['status'] ?? $entrepreneur->status;

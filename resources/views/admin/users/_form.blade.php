@@ -40,6 +40,21 @@
             @endforeach
         </select>
     </div>
+
+    <div>
+        <label class="text-sm font-semibold text-slate-700">Unidade</label>
+        @php
+            $selectedUnit = (string) old('unidade_id', $user?->unidade_id ?? request()->session()->get(\App\Support\UnitContext::SESSION_KEY));
+        @endphp
+        <select name="unidade_id" required class="mt-1 w-full rounded-xl border-slate-200">
+            <option value="">Selecione</option>
+            @foreach (($unidades ?? collect()) as $unidade)
+                <option value="{{ $unidade->id }}" @selected($selectedUnit === (string) $unidade->id)>
+                    {{ $unidade->nome }} - {{ $unidade->cidade }}
+                </option>
+            @endforeach
+        </select>
+    </div>
 </div>
 
 <div class="mt-6 flex gap-3">

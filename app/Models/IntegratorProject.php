@@ -19,6 +19,7 @@ class IntegratorProject extends Model
         'cover_image',
         'status',
         'created_by',
+        'unidade_id',
         'approved_by',
         'approved_at',
     ];
@@ -30,6 +31,11 @@ class IntegratorProject extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function unidade(): BelongsTo
+    {
+        return $this->belongsTo(Unidade::class);
     }
 
     public function approver(): BelongsTo

@@ -21,7 +21,7 @@ class ActionPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole('operador');
+        return $user->hasAnyRole(['operador', 'admin_unidade']);
     }
 
     /**
@@ -29,7 +29,13 @@ class ActionPolicy
      */
     public function view(User $user, Action $action): bool
     {
-        return $user->hasRole('operador') && $action->created_by === $user->id;
+        if ($user->hasRole('admin_unidade')) {
+            return (int) $action->unidade_id === (int) $user->unidade_id;
+        }
+
+        return $user->hasRole('operador')
+            && $action->created_by === $user->id
+            && (int) $action->unidade_id === (int) $user->unidade_id;
     }
 
     /**
@@ -37,7 +43,7 @@ class ActionPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasRole('operador');
+        return $user->hasAnyRole(['operador', 'admin_unidade']);
     }
 
     /**
@@ -45,7 +51,13 @@ class ActionPolicy
      */
     public function update(User $user, Action $action): bool
     {
-        return $user->hasRole('operador') && $action->created_by === $user->id;
+        if ($user->hasRole('admin_unidade')) {
+            return (int) $action->unidade_id === (int) $user->unidade_id;
+        }
+
+        return $user->hasRole('operador')
+            && $action->created_by === $user->id
+            && (int) $action->unidade_id === (int) $user->unidade_id;
     }
 
     /**
@@ -53,7 +65,13 @@ class ActionPolicy
      */
     public function delete(User $user, Action $action): bool
     {
-        return $user->hasRole('operador') && $action->created_by === $user->id;
+        if ($user->hasRole('admin_unidade')) {
+            return (int) $action->unidade_id === (int) $user->unidade_id;
+        }
+
+        return $user->hasRole('operador')
+            && $action->created_by === $user->id
+            && (int) $action->unidade_id === (int) $user->unidade_id;
     }
 
     /**
@@ -61,7 +79,13 @@ class ActionPolicy
      */
     public function restore(User $user, Action $action): bool
     {
-        return $user->hasRole('operador') && $action->created_by === $user->id;
+        if ($user->hasRole('admin_unidade')) {
+            return (int) $action->unidade_id === (int) $user->unidade_id;
+        }
+
+        return $user->hasRole('operador')
+            && $action->created_by === $user->id
+            && (int) $action->unidade_id === (int) $user->unidade_id;
     }
 
     /**
@@ -69,6 +93,12 @@ class ActionPolicy
      */
     public function forceDelete(User $user, Action $action): bool
     {
-        return $user->hasRole('operador') && $action->created_by === $user->id;
+        if ($user->hasRole('admin_unidade')) {
+            return (int) $action->unidade_id === (int) $user->unidade_id;
+        }
+
+        return $user->hasRole('operador')
+            && $action->created_by === $user->id
+            && (int) $action->unidade_id === (int) $user->unidade_id;
     }
 }

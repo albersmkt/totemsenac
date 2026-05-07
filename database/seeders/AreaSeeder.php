@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Area;
+use App\Models\Unidade;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -13,6 +14,11 @@ class AreaSeeder extends Seeder
      */
     public function run(): void
     {
+        $unidades = Unidade::query()->pluck('id');
+        if ($unidades->isEmpty()) {
+            return;
+        }
+
         $areas = [
             'Beleza e Estética',
             'Bem-estar',
@@ -31,11 +37,16 @@ class AreaSeeder extends Seeder
             'Turismo e Hospitalidade',
         ];
 
-        foreach ($areas as $name) {
-            Area::updateOrCreate(
-                ['slug' => Str::slug($name)],
-                ['name' => $name]
-            );
+        foreach ($unidades as $unidadeId) {
+            foreach ($areas as $name) {
+                Area::updateOrCreate(
+                    [
+                        'unidade_id' => $unidadeId,
+                        'slug' => Str::slug($name),
+                    ],
+                    ['name' => $name]
+                );
+            }
         }
     }
 }

@@ -4,12 +4,15 @@ namespace App\Http\Controllers\Totem;
 
 use App\Http\Controllers\Controller;
 use App\Models\Event;
+use App\Support\UnitContext;
 
 class EventController extends Controller
 {
     public function index()
     {
+        $unitId = UnitContext::resolveTotemUnitId(request());
         $events = Event::where('status', 'published')
+            ->where('unidade_id', $unitId)
             ->orderByDesc('start_at')
             ->paginate(12);
 
@@ -18,7 +21,8 @@ class EventController extends Controller
 
     public function show(Event $event)
     {
-        abort_unless($event->status === 'published', 404);
+        $unitId = UnitContext::resolveTotemUnitId(request());
+        abort_unless($event->status === 'published' && (int) $event->unidade_id === (int) $unitId, 404);
 
         $event->load('images');
 

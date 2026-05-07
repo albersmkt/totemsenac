@@ -21,7 +21,7 @@ class EventPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole('operador');
+        return $user->hasAnyRole(['operador', 'admin_unidade']);
     }
 
     /**
@@ -29,7 +29,13 @@ class EventPolicy
      */
     public function view(User $user, Event $event): bool
     {
-        return $user->hasRole('operador') && $event->created_by === $user->id;
+        if ($user->hasRole('admin_unidade')) {
+            return (int) $event->unidade_id === (int) $user->unidade_id;
+        }
+
+        return $user->hasRole('operador')
+            && $event->created_by === $user->id
+            && (int) $event->unidade_id === (int) $user->unidade_id;
     }
 
     /**
@@ -37,7 +43,7 @@ class EventPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasRole('operador');
+        return $user->hasAnyRole(['operador', 'admin_unidade']);
     }
 
     /**
@@ -45,7 +51,13 @@ class EventPolicy
      */
     public function update(User $user, Event $event): bool
     {
-        return $user->hasRole('operador') && $event->created_by === $user->id;
+        if ($user->hasRole('admin_unidade')) {
+            return (int) $event->unidade_id === (int) $user->unidade_id;
+        }
+
+        return $user->hasRole('operador')
+            && $event->created_by === $user->id
+            && (int) $event->unidade_id === (int) $user->unidade_id;
     }
 
     /**
@@ -53,7 +65,13 @@ class EventPolicy
      */
     public function delete(User $user, Event $event): bool
     {
-        return $user->hasRole('operador') && $event->created_by === $user->id;
+        if ($user->hasRole('admin_unidade')) {
+            return (int) $event->unidade_id === (int) $user->unidade_id;
+        }
+
+        return $user->hasRole('operador')
+            && $event->created_by === $user->id
+            && (int) $event->unidade_id === (int) $user->unidade_id;
     }
 
     /**
@@ -61,7 +79,13 @@ class EventPolicy
      */
     public function restore(User $user, Event $event): bool
     {
-        return $user->hasRole('operador') && $event->created_by === $user->id;
+        if ($user->hasRole('admin_unidade')) {
+            return (int) $event->unidade_id === (int) $user->unidade_id;
+        }
+
+        return $user->hasRole('operador')
+            && $event->created_by === $user->id
+            && (int) $event->unidade_id === (int) $user->unidade_id;
     }
 
     /**
@@ -69,6 +93,12 @@ class EventPolicy
      */
     public function forceDelete(User $user, Event $event): bool
     {
-        return $user->hasRole('operador') && $event->created_by === $user->id;
+        if ($user->hasRole('admin_unidade')) {
+            return (int) $event->unidade_id === (int) $user->unidade_id;
+        }
+
+        return $user->hasRole('operador')
+            && $event->created_by === $user->id
+            && (int) $event->unidade_id === (int) $user->unidade_id;
     }
 }

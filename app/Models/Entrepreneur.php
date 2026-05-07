@@ -16,6 +16,7 @@ class Entrepreneur extends Model
         'whatsapp_message_template',
         'status',
         'created_by',
+        'unidade_id',
         'approved_by',
         'approved_at',
     ];
@@ -27,6 +28,11 @@ class Entrepreneur extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function unidade(): BelongsTo
+    {
+        return $this->belongsTo(Unidade::class);
     }
 
     public function approver(): BelongsTo

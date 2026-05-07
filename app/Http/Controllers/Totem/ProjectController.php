@@ -4,13 +4,16 @@ namespace App\Http\Controllers\Totem;
 
 use App\Http\Controllers\Controller;
 use App\Models\IntegratorProject;
+use App\Support\UnitContext;
 
 class ProjectController extends Controller
 {
     public function index()
     {
+        $unitId = UnitContext::resolveTotemUnitId(request());
         $projects = IntegratorProject::with('area')
             ->where('status', 'published')
+            ->where('unidade_id', $unitId)
             ->latest()
             ->paginate(12);
 
@@ -19,7 +22,8 @@ class ProjectController extends Controller
 
     public function show(IntegratorProject $project)
     {
-        abort_unless($project->status === 'published', 404);
+        $unitId = UnitContext::resolveTotemUnitId(request());
+        abort_unless($project->status === 'published' && (int) $project->unidade_id === (int) $unitId, 404);
 
         $project->load(['images', 'members', 'creator', 'area']);
 

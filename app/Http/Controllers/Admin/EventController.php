@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Event;
 use App\Models\EventImage;
+use App\Support\UnitContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -18,8 +19,8 @@ class EventController extends Controller
         $this->authorize('viewAny', Event::class);
 
         $query = Event::query();
-
-        if (! $request->user()->hasRole('super_admin')) {
+        UnitContext::applyAdminScope($query, $request->user(), $request);
+        if ($request->user()->hasRole('operador') && ! $request->user()->hasAnyRole(['super_admin', 'admin_unidade'])) {
             $query->where('created_by', $request->user()->id);
         }
 
@@ -66,7 +67,9 @@ class EventController extends Controller
         }
 
         $data['created_by'] = $request->user()->id;
-        if (! $request->user()->hasRole('super_admin')) {
+        $canManageStatus = $request->user()->hasAnyRole(['super_admin', 'admin_unidade']);
+        $data['unidade_id'] = UnitContext::resolveCreationUnitId($request->user(), $request);
+        if (! $canManageStatus) {
             $data['status'] = 'pending';
         } else {
             $data['status'] = $data['status'] ?? 'draft';
@@ -156,7 +159,8 @@ class EventController extends Controller
             }
         }
 
-        if (! $request->user()->hasRole('super_admin')) {
+        $canManageStatus = $request->user()->hasAnyRole(['super_admin', 'admin_unidade']);
+        if (! $canManageStatus) {
             $data['status'] = $event->status;
         } else {
             $data['status'] = $data['status'] ?? $event->status;

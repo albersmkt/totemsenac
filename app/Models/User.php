@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -24,6 +25,7 @@ class User extends Authenticatable
         'email',
         'password',
         'photo',
+        'unidade_id',
     ];
 
     /**
@@ -52,6 +54,11 @@ class User extends Authenticatable
     public function actions(): HasMany
     {
         return $this->hasMany(Action::class, 'created_by');
+    }
+
+    public function unidade(): BelongsTo
+    {
+        return $this->belongsTo(Unidade::class);
     }
 
     public function events(): HasMany

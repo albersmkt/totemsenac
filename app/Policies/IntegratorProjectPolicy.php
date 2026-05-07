@@ -21,7 +21,7 @@ class IntegratorProjectPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole('estudante');
+        return $user->hasAnyRole(['estudante', 'admin_unidade']);
     }
 
     /**
@@ -29,7 +29,13 @@ class IntegratorProjectPolicy
      */
     public function view(User $user, IntegratorProject $integratorProject): bool
     {
-        return $user->hasRole('estudante') && $integratorProject->created_by === $user->id;
+        if ($user->hasRole('admin_unidade')) {
+            return (int) $integratorProject->unidade_id === (int) $user->unidade_id;
+        }
+
+        return $user->hasRole('estudante')
+            && $integratorProject->created_by === $user->id
+            && (int) $integratorProject->unidade_id === (int) $user->unidade_id;
     }
 
     /**
@@ -37,7 +43,7 @@ class IntegratorProjectPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasRole('estudante');
+        return $user->hasAnyRole(['estudante', 'admin_unidade']);
     }
 
     /**
@@ -45,7 +51,13 @@ class IntegratorProjectPolicy
      */
     public function update(User $user, IntegratorProject $integratorProject): bool
     {
-        return $user->hasRole('estudante') && $integratorProject->created_by === $user->id;
+        if ($user->hasRole('admin_unidade')) {
+            return (int) $integratorProject->unidade_id === (int) $user->unidade_id;
+        }
+
+        return $user->hasRole('estudante')
+            && $integratorProject->created_by === $user->id
+            && (int) $integratorProject->unidade_id === (int) $user->unidade_id;
     }
 
     /**
@@ -53,7 +65,13 @@ class IntegratorProjectPolicy
      */
     public function delete(User $user, IntegratorProject $integratorProject): bool
     {
-        return $user->hasRole('estudante') && $integratorProject->created_by === $user->id;
+        if ($user->hasRole('admin_unidade')) {
+            return (int) $integratorProject->unidade_id === (int) $user->unidade_id;
+        }
+
+        return $user->hasRole('estudante')
+            && $integratorProject->created_by === $user->id
+            && (int) $integratorProject->unidade_id === (int) $user->unidade_id;
     }
 
     /**
@@ -61,7 +79,13 @@ class IntegratorProjectPolicy
      */
     public function restore(User $user, IntegratorProject $integratorProject): bool
     {
-        return $user->hasRole('estudante') && $integratorProject->created_by === $user->id;
+        if ($user->hasRole('admin_unidade')) {
+            return (int) $integratorProject->unidade_id === (int) $user->unidade_id;
+        }
+
+        return $user->hasRole('estudante')
+            && $integratorProject->created_by === $user->id
+            && (int) $integratorProject->unidade_id === (int) $user->unidade_id;
     }
 
     /**
@@ -69,7 +93,13 @@ class IntegratorProjectPolicy
      */
     public function forceDelete(User $user, IntegratorProject $integratorProject): bool
     {
-        return $user->hasRole('estudante') && $integratorProject->created_by === $user->id;
+        if ($user->hasRole('admin_unidade')) {
+            return (int) $integratorProject->unidade_id === (int) $user->unidade_id;
+        }
+
+        return $user->hasRole('estudante')
+            && $integratorProject->created_by === $user->id
+            && (int) $integratorProject->unidade_id === (int) $user->unidade_id;
     }
 
     public function approve(User $user, IntegratorProject $integratorProject): bool

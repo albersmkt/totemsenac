@@ -21,7 +21,7 @@ class EntrepreneurPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole('estudante');
+        return $user->hasAnyRole(['estudante', 'admin_unidade']);
     }
 
     /**
@@ -29,7 +29,13 @@ class EntrepreneurPolicy
      */
     public function view(User $user, Entrepreneur $entrepreneur): bool
     {
-        return $user->hasRole('estudante') && $entrepreneur->created_by === $user->id;
+        if ($user->hasRole('admin_unidade')) {
+            return (int) $entrepreneur->unidade_id === (int) $user->unidade_id;
+        }
+
+        return $user->hasRole('estudante')
+            && $entrepreneur->created_by === $user->id
+            && (int) $entrepreneur->unidade_id === (int) $user->unidade_id;
     }
 
     /**
@@ -37,7 +43,7 @@ class EntrepreneurPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasRole('estudante');
+        return $user->hasAnyRole(['estudante', 'admin_unidade']);
     }
 
     /**
@@ -45,7 +51,13 @@ class EntrepreneurPolicy
      */
     public function update(User $user, Entrepreneur $entrepreneur): bool
     {
-        return $user->hasRole('estudante') && $entrepreneur->created_by === $user->id;
+        if ($user->hasRole('admin_unidade')) {
+            return (int) $entrepreneur->unidade_id === (int) $user->unidade_id;
+        }
+
+        return $user->hasRole('estudante')
+            && $entrepreneur->created_by === $user->id
+            && (int) $entrepreneur->unidade_id === (int) $user->unidade_id;
     }
 
     /**
@@ -53,7 +65,13 @@ class EntrepreneurPolicy
      */
     public function delete(User $user, Entrepreneur $entrepreneur): bool
     {
-        return $user->hasRole('estudante') && $entrepreneur->created_by === $user->id;
+        if ($user->hasRole('admin_unidade')) {
+            return (int) $entrepreneur->unidade_id === (int) $user->unidade_id;
+        }
+
+        return $user->hasRole('estudante')
+            && $entrepreneur->created_by === $user->id
+            && (int) $entrepreneur->unidade_id === (int) $user->unidade_id;
     }
 
     /**
@@ -61,7 +79,13 @@ class EntrepreneurPolicy
      */
     public function restore(User $user, Entrepreneur $entrepreneur): bool
     {
-        return $user->hasRole('estudante') && $entrepreneur->created_by === $user->id;
+        if ($user->hasRole('admin_unidade')) {
+            return (int) $entrepreneur->unidade_id === (int) $user->unidade_id;
+        }
+
+        return $user->hasRole('estudante')
+            && $entrepreneur->created_by === $user->id
+            && (int) $entrepreneur->unidade_id === (int) $user->unidade_id;
     }
 
     /**
@@ -69,7 +93,13 @@ class EntrepreneurPolicy
      */
     public function forceDelete(User $user, Entrepreneur $entrepreneur): bool
     {
-        return $user->hasRole('estudante') && $entrepreneur->created_by === $user->id;
+        if ($user->hasRole('admin_unidade')) {
+            return (int) $entrepreneur->unidade_id === (int) $user->unidade_id;
+        }
+
+        return $user->hasRole('estudante')
+            && $entrepreneur->created_by === $user->id
+            && (int) $entrepreneur->unidade_id === (int) $user->unidade_id;
     }
 
     public function approve(User $user, Entrepreneur $entrepreneur): bool

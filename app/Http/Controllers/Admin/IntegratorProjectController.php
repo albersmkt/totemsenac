@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Area;
 use App\Models\IntegratorProject;
 use App\Models\IntegratorProjectImage;
+use App\Support\UnitContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class IntegratorProjectController extends Controller
 {
@@ -19,8 +21,8 @@ class IntegratorProjectController extends Controller
         $this->authorize('viewAny', IntegratorProject::class);
 
         $query = IntegratorProject::query()->with('area');
-
-        if (! $request->user()->hasRole('super_admin')) {
+        UnitContext::applyAdminScope($query, $request->user(), $request);
+        if ($request->user()->hasRole('estudante') && ! $request->user()->hasAnyRole(['super_admin', 'admin_unidade'])) {
             $query->where('created_by', $request->user()->id);
         }
 
@@ -47,7 +49,12 @@ class IntegratorProjectController extends Controller
     {
         $this->authorize('create', IntegratorProject::class);
 
-        $areas = Area::query()->orderBy('name')->get();
+        $request = request();
+        $creationUnitId = UnitContext::resolveCreationUnitId($request->user(), $request);
+        $areas = Area::query()
+            ->where('unidade_id', $creationUnitId)
+            ->orderBy('name')
+            ->get();
 
         return view('admin.projects.create', compact('areas'));
     }
@@ -58,13 +65,17 @@ class IntegratorProjectController extends Controller
     public function store(Request $request)
     {
         $this->authorize('create', IntegratorProject::class);
+        $creationUnitId = UnitContext::resolveCreationUnitId($request->user(), $request);
 
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'course' => 'required|string|max:255',
             'class_group' => 'required|string|max:255',
-            'area_id' => 'required|exists:areas,id',
+            'area_id' => [
+                'required',
+                Rule::exists('areas', 'id')->where(fn ($query) => $query->where('unidade_id', $creationUnitId)),
+            ],
             'member_names' => 'nullable|string|max:2000',
             'status' => 'nullable|in:pending,rejected,published,archived',
             'cover_image' => 'nullable|image|max:8192',
@@ -77,14 +88,16 @@ class IntegratorProjectController extends Controller
         }
 
         $data['created_by'] = $request->user()->id;
-        if (! $request->user()->hasRole('super_admin')) {
+        $canManageStatus = $request->user()->hasAnyRole(['super_admin', 'admin_unidade']);
+        $data['unidade_id'] = $creationUnitId;
+        if (! $canManageStatus) {
             $data['status'] = 'pending';
         } else {
             $data['status'] = $data['status'] ?? 'pending';
         }
 
         $creatorName = $request->user()->name;
-        if ($request->user()->hasRole('estudante') && ! $request->user()->hasRole('super_admin')) {
+        if ($request->user()->hasRole('estudante') && ! $request->user()->hasAnyRole(['super_admin', 'admin_unidade'])) {
             $data['member_names'] = $this->normalizeMemberNames($request->input('member_names'), $creatorName);
         } elseif ($request->filled('member_names')) {
             $data['member_names'] = $this->normalizeMemberNames($request->input('member_names'), $creatorName);
@@ -113,7 +126,11 @@ class IntegratorProjectController extends Controller
         $this->authorize('update', $project);
 
         $project->load(['images', 'members', 'area']);
-        $areas = Area::query()->orderBy('name')->get();
+        $areaUnitId = $project->unidade_id ?: UnitContext::resolveCreationUnitId(request()->user(), request());
+        $areas = Area::query()
+            ->where('unidade_id', $areaUnitId)
+            ->orderBy('name')
+            ->get();
 
         return view('admin.projects.edit', compact('project', 'areas'));
     }
@@ -124,13 +141,17 @@ class IntegratorProjectController extends Controller
     public function update(Request $request, IntegratorProject $project)
     {
         $this->authorize('update', $project);
+        $targetUnitId = $project->unidade_id ?: UnitContext::resolveCreationUnitId($request->user(), $request);
 
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'course' => 'required|string|max:255',
             'class_group' => 'required|string|max:255',
-            'area_id' => 'required|exists:areas,id',
+            'area_id' => [
+                'required',
+                Rule::exists('areas', 'id')->where(fn ($query) => $query->where('unidade_id', $targetUnitId)),
+            ],
             'member_names' => 'nullable|string|max:2000',
             'status' => 'nullable|in:pending,rejected,published,archived',
             'cover_image' => 'nullable|image|max:8192',
@@ -141,14 +162,15 @@ class IntegratorProjectController extends Controller
             'remove_images.*' => 'integer|exists:integrator_project_images,id',
         ]);
 
-        if (! $request->user()->hasRole('super_admin')) {
+        $canManageStatus = $request->user()->hasAnyRole(['super_admin', 'admin_unidade']);
+        if (! $canManageStatus) {
             $data['status'] = $project->status;
         } else {
             $data['status'] = $data['status'] ?? $project->status;
         }
 
         $creatorName = $project->creator?->name ?? $request->user()->name;
-        if ($request->user()->hasRole('estudante') && ! $request->user()->hasRole('super_admin')) {
+        if ($request->user()->hasRole('estudante') && ! $request->user()->hasAnyRole(['super_admin', 'admin_unidade'])) {
             $data['member_names'] = $this->normalizeMemberNames($request->input('member_names'), $creatorName);
         } elseif ($request->filled('member_names')) {
             $data['member_names'] = $this->normalizeMemberNames($request->input('member_names'), $creatorName);

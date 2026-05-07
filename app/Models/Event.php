@@ -17,6 +17,7 @@ class Event extends Model
         'cover_image',
         'status',
         'created_by',
+        'unidade_id',
         'published_at',
     ];
 
@@ -29,6 +30,11 @@ class Event extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function unidade(): BelongsTo
+    {
+        return $this->belongsTo(Unidade::class);
     }
 
     public function images(): HasMany

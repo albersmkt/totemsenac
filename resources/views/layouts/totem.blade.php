@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    @php
+        $totemUnitId = \App\Support\UnitContext::resolveTotemUnitId(request());
+        $totemUnitName = optional(\App\Models\Unidade::find($totemUnitId))->nome ?? 'Senac';
+    @endphp
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Senac Registro - Totem</title>
+    <title>{{ $totemUnitName }} - Totem</title>
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
@@ -124,7 +128,7 @@
             <div class="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between gap-6">
                 <div class="flex items-center">
                     <div class="h-12 w-[180px] md:w-[210px] flex items-center overflow-hidden">
-                        <img src="{{ asset('images/logo.png') }}" alt="Senac Registro" class="h-full w-auto object-contain">
+                        <img src="{{ asset('images/logo.png') }}" alt="{{ $totemUnitName }}" class="h-full w-auto object-contain">
                     </div>
                 </div>
                 <nav class="flex flex-wrap items-center gap-2 text-sm font-semibold">
@@ -164,6 +168,7 @@
                 $openRegisterModal = old('form_source') === 'register_modal'
                     || $requestedModal === 'register'
                     || $errors->has('name')
+                    || $errors->has('unidade_id')
                     || $errors->has('password_confirmation');
                 $openLoginModal = ! $openRegisterModal && (
                     old('form_source') === 'login_modal'
@@ -172,6 +177,7 @@
                     || $errors->has('password')
                 );
                 $hasOpenModal = $openLoginModal || $openRegisterModal;
+                $unidadesCadastro = \App\Models\Unidade::query()->orderBy('nome')->get();
             @endphp
             <div
                 class="modal fade{{ $openLoginModal ? ' show' : '' }}"
@@ -271,6 +277,21 @@
                                     <label for="modal-register-email" class="text-sm font-semibold text-slate-700">Email</label>
                                     <input id="modal-register-email" type="email" name="email" value="{{ old('email') }}" required autocomplete="username" class="mt-1 w-full rounded-xl border-slate-200">
                                     @error('email')
+                                        <p class="mt-2 text-sm text-rose-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div class="mt-4">
+                                    <label for="modal-register-unidade" class="text-sm font-semibold text-slate-700">Unidade</label>
+                                    <select id="modal-register-unidade" name="unidade_id" required class="mt-1 w-full rounded-xl border-slate-200">
+                                        <option value="">Selecione</option>
+                                        @foreach ($unidadesCadastro as $unidade)
+                                            <option value="{{ $unidade->id }}" @selected((string) old('unidade_id') === (string) $unidade->id)>
+                                                {{ $unidade->nome }} - {{ $unidade->cidade }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('unidade_id')
                                         <p class="mt-2 text-sm text-rose-600">{{ $message }}</p>
                                     @enderror
                                 </div>

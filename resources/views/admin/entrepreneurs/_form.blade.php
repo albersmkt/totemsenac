@@ -27,7 +27,7 @@
             <input name="whatsapp_message_template" value="{{ old('whatsapp_message_template', $entrepreneur->whatsapp_message_template ?? 'Ola! Vi seu perfil no Totem Senac Registro e gostaria de saber mais.') }}" class="mt-1 w-full rounded-xl border-slate-200">
         </div>
     </div>
-    @role('super_admin')
+    @hasanyrole('super_admin|admin_unidade')
         <div>
             <label class="text-sm font-semibold text-slate-700">Status</label>
             <select name="status" class="mt-1 w-full rounded-xl border-slate-200">
@@ -36,7 +36,7 @@
                 @endforeach
             </select>
         </div>
-    @endrole
+    @endhasanyrole
     <div>
         <label class="text-sm font-semibold text-slate-700">Fotos</label>
         <input type="file" name="photos[]" accept="image/*" multiple class="mt-1 w-full rounded-xl border-slate-200">

@@ -4,11 +4,13 @@
     @php
         $roleLabels = [
             'super_admin' => 'Super Admin',
+            'admin_unidade' => 'Admin da Unidade',
             'operador' => 'Operador',
             'estudante' => 'Estudante',
         ];
         $badgeClasses = [
             'super_admin' => 'bg-senac-blue text-white',
+            'admin_unidade' => 'bg-emerald-600 text-white',
             'operador' => 'bg-senac-orange text-white',
             'estudante' => 'bg-slate-200 text-slate-700',
         ];
@@ -25,12 +27,7 @@
     <div class="totem-card p-4 mb-6">
         <div class="flex flex-wrap gap-2 text-sm font-semibold">
             @php
-                $filters = [
-                    'todos' => 'Todos',
-                    'super_admin' => 'Super Admin',
-                    'operador' => 'Operador',
-                    'estudante' => 'Estudante',
-                ];
+                $filters = ['todos' => 'Todos'] + $roles;
             @endphp
             @foreach ($filters as $key => $label)
                 @php
@@ -56,6 +53,7 @@
                     <tr class="text-left text-slate-400 uppercase tracking-widest text-xs">
                         <th class="pb-3">Usuario</th>
                         <th class="pb-3">Email</th>
+                        <th class="pb-3">Unidade</th>
                         <th class="pb-3">Nivel de acesso</th>
                         <th class="pb-3 text-right">Ações</th>
                     </tr>
@@ -81,6 +79,9 @@
                                 </div>
                             </td>
                             <td class="py-4 text-slate-700">{{ $user->email }}</td>
+                            <td class="py-4 text-slate-700">
+                                {{ $user->unidade?->nome ?? 'Sem unidade' }}
+                            </td>
                             <td class="py-4">
                                 <div class="flex flex-wrap gap-2">
                                     @foreach ($user->roles as $role)
@@ -105,7 +106,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="py-10 text-center text-slate-500">
+                            <td colspan="5" class="py-10 text-center text-slate-500">
                                 Nenhum usuario encontrado para este nivel.
                             </td>
                         </tr>

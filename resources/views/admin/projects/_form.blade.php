@@ -31,7 +31,7 @@
         </div>
     </div>
 
-    @role('super_admin')
+    @hasanyrole('super_admin|admin_unidade')
         <div>
             <label class="text-sm font-semibold text-slate-700">Status</label>
             <select name="status" class="mt-1 w-full rounded-xl border-slate-200">
@@ -40,7 +40,7 @@
             @endforeach
             </select>
         </div>
-    @endrole
+    @endhasanyrole
 
     <div>
         <label class="text-sm font-semibold text-slate-700">Capa</label>

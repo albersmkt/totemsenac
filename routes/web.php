@@ -7,6 +7,8 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EntrepreneurController as AdminEntrepreneurController;
 use App\Http\Controllers\Admin\EventController as AdminEventController;
 use App\Http\Controllers\Admin\IntegratorProjectController as AdminProjectController;
+use App\Http\Controllers\Admin\UnidadeController as AdminUnidadeController;
+use App\Http\Controllers\Admin\UnitContextController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Totem\ActionController;
@@ -48,11 +50,11 @@ Route::middleware('auth')->group(function () {
 
 Route::prefix('admin')
     ->name('admin.')
-    ->middleware(['auth', 'role:super_admin|operador|estudante'])
+    ->middleware(['auth', 'role:super_admin|admin_unidade|operador|estudante'])
     ->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-        Route::middleware('role:super_admin|operador')->group(function () {
+        Route::middleware('role:super_admin|admin_unidade|operador')->group(function () {
             Route::resource('acoes', AdminActionController::class)
                 ->parameters(['acoes' => 'action'])
                 ->except(['show'])
@@ -63,7 +65,7 @@ Route::prefix('admin')
                 ->names('events');
         });
 
-        Route::middleware('role:super_admin|estudante')->group(function () {
+        Route::middleware('role:super_admin|admin_unidade|estudante')->group(function () {
             Route::resource('projetos', AdminProjectController::class)
                 ->parameters(['projetos' => 'project'])
                 ->except(['show'])
@@ -75,6 +77,14 @@ Route::prefix('admin')
         });
 
         Route::middleware('role:super_admin')->group(function () {
+            Route::post('/unidade-contexto', [UnitContextController::class, 'update'])->name('unit-context.update');
+
+            Route::resource('unidades', AdminUnidadeController::class)
+                ->parameters(['unidades' => 'unidade'])
+                ->except(['show']);
+        });
+
+        Route::middleware('role:super_admin|admin_unidade')->group(function () {
             Route::get('/aprovacoes', [ApprovalController::class, 'index'])->name('approvals.index');
             Route::get('/aprovacoes/acoes/{action}', [ApprovalController::class, 'showAction'])->name('approvals.actions.show');
             Route::get('/aprovacoes/eventos/{event}', [ApprovalController::class, 'showEvent'])->name('approvals.events.show');

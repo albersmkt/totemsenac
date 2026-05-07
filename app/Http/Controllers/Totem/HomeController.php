@@ -7,28 +7,35 @@ use App\Models\Action;
 use App\Models\Entrepreneur;
 use App\Models\Event;
 use App\Models\IntegratorProject;
+use App\Support\UnitContext;
 
 class HomeController extends Controller
 {
     public function index()
     {
+        $unitId = UnitContext::resolveTotemUnitId(request());
+
         $actions = Action::where('status', 'published')
+            ->where('unidade_id', $unitId)
             ->orderByDesc('start_at')
             ->limit(8)
             ->get();
 
         $events = Event::where('status', 'published')
+            ->where('unidade_id', $unitId)
             ->orderByDesc('start_at')
             ->limit(8)
             ->get();
 
         $projects = IntegratorProject::with('area')
             ->where('status', 'published')
+            ->where('unidade_id', $unitId)
             ->latest()
             ->limit(8)
             ->get();
 
         $entrepreneurs = Entrepreneur::where('status', 'approved')
+            ->where('unidade_id', $unitId)
             ->with('images')
             ->latest()
             ->limit(8)
@@ -37,6 +44,7 @@ class HomeController extends Controller
         $heroSlides = collect();
 
         $heroAction = Action::where('status', 'published')
+            ->where('unidade_id', $unitId)
             ->orderByDesc('start_at')
             ->first();
         if ($heroAction) {
@@ -50,6 +58,7 @@ class HomeController extends Controller
         }
 
         $heroEvent = Event::where('status', 'published')
+            ->where('unidade_id', $unitId)
             ->orderByDesc('start_at')
             ->first();
         if ($heroEvent) {
@@ -63,6 +72,7 @@ class HomeController extends Controller
         }
 
         $heroProject = IntegratorProject::where('status', 'published')
+            ->where('unidade_id', $unitId)
             ->latest()
             ->first();
         if ($heroProject) {
@@ -76,6 +86,7 @@ class HomeController extends Controller
         }
 
         $heroEntrepreneur = Entrepreneur::where('status', 'approved')
+            ->where('unidade_id', $unitId)
             ->with('images')
             ->latest()
             ->first();

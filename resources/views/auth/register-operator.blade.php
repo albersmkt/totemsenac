@@ -19,6 +19,19 @@
         </div>
 
         <div class="mt-4">
+            <x-input-label for="unidade_id" :value="'Unidade'" />
+            <select id="unidade_id" name="unidade_id" required class="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-senac-orange focus:ring-senac-orange">
+                <option value="">Selecione</option>
+                @foreach (($unidades ?? collect()) as $unidade)
+                    <option value="{{ $unidade->id }}" @selected((string) old('unidade_id') === (string) $unidade->id)>
+                        {{ $unidade->nome }} - {{ $unidade->cidade }}
+                    </option>
+                @endforeach
+            </select>
+            <x-input-error :messages="$errors->get('unidade_id')" class="mt-2" />
+        </div>
+
+        <div class="mt-4">
             <x-input-label for="password" :value="'Senha'" />
             <x-text-input id="password" class="block mt-1 w-full"
                             type="password"

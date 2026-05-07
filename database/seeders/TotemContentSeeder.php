@@ -9,6 +9,7 @@ use App\Models\Event;
 use App\Models\EventImage;
 use App\Models\IntegratorProject;
 use App\Models\IntegratorProjectImage;
+use App\Models\Unidade;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
@@ -17,18 +18,29 @@ class TotemContentSeeder extends Seeder
 {
     public function run(): void
     {
+        $registroId = (int) Unidade::query()
+            ->where('nome', 'Senac Registro')
+            ->value('id');
+
         $operator = User::firstOrCreate(
             ['email' => 'operador@senac.test'],
-            ['name' => 'Operador Totem', 'password' => bcrypt('password')]
+            ['name' => 'Operador Totem', 'password' => bcrypt('password'), 'unidade_id' => $registroId]
         );
         $student = User::firstOrCreate(
             ['email' => 'aluno@senac.test'],
-            ['name' => 'Aluno Senac', 'password' => bcrypt('password')]
+            ['name' => 'Aluno Senac', 'password' => bcrypt('password'), 'unidade_id' => $registroId]
         );
         $demoStudent = User::firstOrCreate(
             ['email' => 'aluno.demo@senac.test'],
-            ['name' => 'Aluno Demo', 'password' => bcrypt('password')]
+            ['name' => 'Aluno Demo', 'password' => bcrypt('password'), 'unidade_id' => $registroId]
         );
+
+        foreach ([$operator, $student, $demoStudent] as $user) {
+            if ($user->unidade_id === null) {
+                $user->unidade_id = $registroId;
+                $user->save();
+            }
+        }
 
         if (! $operator->hasRole('operador')) {
             $operator->assignRole('operador');
@@ -41,13 +53,13 @@ class TotemContentSeeder extends Seeder
             $demoStudent->assignRole('estudante');
         }
 
-        $this->seedActions($operator);
-        $this->seedEvents($operator);
-        $this->seedProjects($demoStudent);
-        $this->seedEntrepreneurs($demoStudent);
+        $this->seedActions($operator, $registroId);
+        $this->seedEvents($operator, $registroId);
+        $this->seedProjects($demoStudent, $registroId);
+        $this->seedEntrepreneurs($demoStudent, $registroId);
     }
 
-    private function seedActions(User $operator): void
+    private function seedActions(User $operator, int $registroId): void
     {
         if (Action::count() > 0) {
             return;
@@ -74,12 +86,13 @@ class TotemContentSeeder extends Seeder
                 'cover_image' => $this->seedImage("actions/action-{$index}.svg", $title, '#F36C21', '#005DAA'),
                 'status' => 'published',
                 'created_by' => $operator->id,
+                'unidade_id' => $registroId,
                 'published_at' => now()->subDays(2),
             ]);
         }
     }
 
-    private function seedEvents(User $operator): void
+    private function seedEvents(User $operator, int $registroId): void
     {
         if (Event::count() > 0) {
             return;
@@ -104,6 +117,7 @@ class TotemContentSeeder extends Seeder
                 'cover_image' => $this->seedImage("events/event-{$index}.svg", $title, '#005DAA', '#F36C21'),
                 'status' => 'published',
                 'created_by' => $operator->id,
+                'unidade_id' => $registroId,
                 'published_at' => now()->subDay(),
             ]);
 
@@ -117,7 +131,7 @@ class TotemContentSeeder extends Seeder
         }
     }
 
-    private function seedProjects(User $student): void
+    private function seedProjects(User $student, int $registroId): void
     {
         if (IntegratorProject::count() > 0) {
             return;
@@ -141,6 +155,7 @@ class TotemContentSeeder extends Seeder
                 'cover_image' => $this->seedImage("projects/project-{$index}.svg", $title, '#F36C21', '#005DAA'),
                 'status' => 'published',
                 'created_by' => $student->id,
+                'unidade_id' => $registroId,
                 'approved_by' => User::where('email', 'admin@senac.test')->value('id'),
                 'approved_at' => now()->subDays(3),
             ]);
@@ -159,7 +174,7 @@ class TotemContentSeeder extends Seeder
         }
     }
 
-    private function seedEntrepreneurs(User $student): void
+    private function seedEntrepreneurs(User $student, int $registroId): void
     {
         if (Entrepreneur::count() === 0) {
             $items = [
@@ -180,6 +195,7 @@ class TotemContentSeeder extends Seeder
                     'whatsapp_message_template' => 'Ola! Vi seu perfil no Totem Senac Registro e gostaria de saber mais.',
                     'status' => 'approved',
                     'created_by' => $student->id,
+                    'unidade_id' => $registroId,
                     'approved_by' => User::where('email', 'admin@senac.test')->value('id'),
                     'approved_at' => now()->subDays(2),
                 ]);
@@ -204,6 +220,7 @@ class TotemContentSeeder extends Seeder
                     'whatsapp_message_template' => 'Ola! Vi seu perfil no Totem Senac Registro e gostaria de saber mais.',
                     'status' => 'pending',
                     'created_by' => $student->id,
+                    'unidade_id' => $registroId,
                 ]
             );
 
