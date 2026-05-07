@@ -35,12 +35,18 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        $unitId = $request->user()?->unidade_id;
+
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        if ($unitId) {
+            return redirect()->route('totem.home', ['unidade' => $unitId]);
+        }
+
+        return redirect()->route('totem.home');
     }
 }

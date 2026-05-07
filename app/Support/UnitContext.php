@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 class UnitContext
 {
     public const SESSION_KEY = 'admin_selected_unidade_id';
+    public const TOTEM_SESSION_KEY = 'totem_selected_unidade_id';
 
     private static ?int $cachedDefaultUnitId = null;
 
@@ -88,7 +89,19 @@ class UnitContext
 
         $queryUnit = $request->query('unidade');
         if (is_numeric($queryUnit) && Unidade::query()->whereKey((int) $queryUnit)->exists()) {
-            return (int) $queryUnit;
+            $unitId = (int) $queryUnit;
+            if ($request->hasSession()) {
+                $request->session()->put(self::TOTEM_SESSION_KEY, $unitId);
+            }
+
+            return $unitId;
+        }
+
+        if ($request->hasSession()) {
+            $sessionUnit = $request->session()->get(self::TOTEM_SESSION_KEY);
+            if (is_numeric($sessionUnit) && Unidade::query()->whereKey((int) $sessionUnit)->exists()) {
+                return (int) $sessionUnit;
+            }
         }
 
         return self::defaultUnitId();
