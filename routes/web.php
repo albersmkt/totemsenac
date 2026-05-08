@@ -15,8 +15,8 @@ use App\Http\Controllers\Totem\ActionController;
 use App\Http\Controllers\Totem\BemestarController;
 use App\Http\Controllers\Totem\CoursesController;
 use App\Http\Controllers\Totem\EntrepreneurController;
-use App\Http\Controllers\Totem\EventController;
 use App\Http\Controllers\Totem\ExternalLinkController;
+use App\Http\Controllers\Totem\EventController;
 use App\Http\Controllers\Totem\HomeController;
 use App\Http\Controllers\Totem\ProjectController;
 use App\Http\Controllers\Totem\SenacProxyController;
@@ -85,6 +85,12 @@ Route::prefix('admin')
         });
 
         Route::middleware('role:super_admin|admin_unidade')->group(function () {
+            Route::resource('areas', AdminAreaController::class)
+                ->parameters(['areas' => 'area'])
+                ->except(['show']);
+        });
+
+        Route::middleware('role:super_admin|admin_unidade')->group(function () {
             Route::get('/aprovacoes', [ApprovalController::class, 'index'])->name('approvals.index');
             Route::get('/aprovacoes/acoes/{action}', [ApprovalController::class, 'showAction'])->name('approvals.actions.show');
             Route::get('/aprovacoes/eventos/{event}', [ApprovalController::class, 'showEvent'])->name('approvals.events.show');
@@ -95,11 +101,9 @@ Route::prefix('admin')
                 ->parameters(['usuarios' => 'user'])
                 ->names('users')
                 ->except(['show']);
+        });
 
-            Route::resource('areas', AdminAreaController::class)
-                ->parameters(['areas' => 'area'])
-                ->except(['show']);
-
+        Route::middleware('role:super_admin|admin_unidade')->group(function () {
             Route::post('/aprovacoes/empreendedores/{entrepreneur}/aprovar', [ApprovalController::class, 'approveEntrepreneur'])
                 ->name('approvals.entrepreneurs.approve');
             Route::post('/aprovacoes/empreendedores/{entrepreneur}/reprovar', [ApprovalController::class, 'rejectEntrepreneur'])

@@ -20,7 +20,7 @@ class RegisteredUserController extends Controller
      */
     public function create(): RedirectResponse
     {
-        return redirect()->route('totem.home', ['modal' => 'register']);
+        return redirect()->to(route('totem.home', ['modal' => 'register'], false));
     }
 
     /**

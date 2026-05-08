@@ -132,17 +132,17 @@
                     </div>
                 </div>
                 <nav class="flex flex-wrap items-center gap-2 text-sm font-semibold">
-                    <a href="{{ route('totem.home') }}" class="px-4 py-2 rounded-full {{ $active('totem.home') }}">Inicio</a>
-                    <a href="{{ route('totem.actions.index') }}" class="px-4 py-2 rounded-full {{ $active('totem.actions.*') }}">Ações</a>
-                    <a href="{{ route('totem.events.index') }}" class="px-4 py-2 rounded-full {{ $active('totem.events.*') }}">Eventos</a>
-                    <a href="{{ route('totem.projects.index') }}" class="px-4 py-2 rounded-full {{ $active('totem.projects.*') }}">Projeto Integrador</a>
-                    <a href="{{ route('totem.entrepreneurs.index') }}" class="px-4 py-2 rounded-full {{ $active('totem.entrepreneurs.*') }}">Empreendedores</a>
-                    <a href="{{ route('totem.courses') }}" class="px-4 py-2 rounded-full {{ $active('totem.courses') }}">Cursos</a>
-                    <a href="{{ route('totem.bemestar') }}" class="px-4 py-2 rounded-full {{ $active('totem.bemestar') }}">Bem-estar</a>
+                    <a href="{{ route('totem.home', absolute: false) }}" class="px-4 py-2 rounded-full {{ $active('totem.home') }}">Inicio</a>
+                    <a href="{{ route('totem.actions.index', absolute: false) }}" class="px-4 py-2 rounded-full {{ $active('totem.actions.*') }}">Ações</a>
+                    <a href="{{ route('totem.events.index', absolute: false) }}" class="px-4 py-2 rounded-full {{ $active('totem.events.*') }}">Eventos</a>
+                    <a href="{{ route('totem.projects.index', absolute: false) }}" class="px-4 py-2 rounded-full {{ $active('totem.projects.*') }}">Projeto Integrador</a>
+                    <a href="{{ route('totem.entrepreneurs.index', absolute: false) }}" class="px-4 py-2 rounded-full {{ $active('totem.entrepreneurs.*') }}">Empreendedores</a>
+                    <a href="{{ route('totem.courses', absolute: false) }}" class="px-4 py-2 rounded-full {{ $active('totem.courses') }}">Cursos</a>
+                    <a href="{{ route('totem.bemestar', absolute: false) }}" class="px-4 py-2 rounded-full {{ $active('totem.bemestar') }}">Bem-estar</a>
                     <div class="border-l border-white/30 mx-2"></div>
                     @auth
                         <span class="px-4 py-2 text-white/80">{{ Auth::user()->name }}</span>
-                        <form method="POST" action="{{ route('logout') }}" class="inline">
+                        <form method="POST" action="{{ route('logout', absolute: false) }}" class="inline">
                             @csrf
                             <button type="submit" class="px-4 py-2 rounded-full bg-senac-orange text-white hover:bg-senac-orange/90 transition">Sair</button>
                         </form>
@@ -203,7 +203,7 @@
                                 </div>
                             @endif
 
-                            <form method="POST" action="{{ route('login') }}">
+                            <form method="POST" action="{{ route('login', absolute: false) }}">
                                 @csrf
                                 <input type="hidden" name="form_source" value="login_modal">
 
@@ -229,7 +229,7 @@
                                 </div>
 
                                 <div class="mt-6 flex items-center justify-between gap-3">
-                                    <a href="{{ route('password.request') }}" class="underline text-sm text-slate-600 hover:text-senac-blue">Esqueci minha senha</a>
+                                    <a href="{{ route('password.request', absolute: false) }}" class="underline text-sm text-slate-600 hover:text-senac-blue">Esqueci minha senha</a>
                                     <button class="px-5 py-2 rounded-full bg-senac-orange text-white font-semibold hover:bg-senac-orange/90">Entrar</button>
                                 </div>
 
@@ -261,7 +261,7 @@
                         <div class="modal-body">
                             <p class="text-sm text-slate-500 mb-5">Preencha os dados para criar sua conta no sistema.</p>
 
-                            <form method="POST" action="{{ route('register') }}">
+                            <form method="POST" action="{{ route('register', absolute: false) }}">
                                 @csrf
                                 <input type="hidden" name="form_source" value="register_modal">
 
@@ -336,7 +336,7 @@
 
     <script>
         (function () {
-            const INACTIVITY_LIMIT = 10 * 1000;
+            const INACTIVITY_LIMIT = 45 * 1000;
             let inactivityTimer = null;
 
             const resetTimer = () => {

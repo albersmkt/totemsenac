@@ -15,7 +15,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): RedirectResponse
     {
-        return redirect()->route('totem.home', ['modal' => 'login']);
+        return redirect()->to(route('totem.home', ['modal' => 'login'], false));
     }
 
     /**
@@ -44,9 +44,9 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerateToken();
 
         if ($unitId) {
-            return redirect()->route('totem.home', ['unidade' => $unitId]);
+            return redirect()->to(route('totem.home', ['unidade' => $unitId], false));
         }
 
-        return redirect()->route('totem.home');
+        return redirect()->to(route('totem.home', [], false));
     }
 }
