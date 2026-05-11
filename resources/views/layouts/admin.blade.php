@@ -48,32 +48,32 @@
                     <span class="px-3 py-1 rounded-full bg-senac-orange text-white font-semibold">
                         {{ auth()->user()->name }}
                     </span>
-                    <a href="{{ route('profile.edit', absolute: false) }}" class="px-4 py-2 rounded-full bg-white border border-slate-200 text-slate-700 font-semibold">Meu perfil</a>
-                    <form method="POST" action="{{ route('logout', absolute: false) }}">
+                    <a href="{{ route('profile.edit') }}" class="px-4 py-2 rounded-full bg-white border border-slate-200 text-slate-700 font-semibold">Meu perfil</a>
+                    <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button class="px-4 py-2 rounded-full bg-slate-900 text-white font-semibold">Sair</button>
                     </form>
                 </div>
             </div>
             <nav class="max-w-6xl mx-auto px-6 pb-4 flex flex-wrap gap-3 text-sm font-semibold text-slate-600">
-                <a href="{{ route('admin.dashboard', absolute: false) }}" class="px-4 py-2 rounded-full bg-white border border-slate-200 hover:border-senac-orange">Painel</a>
+                <a href="{{ route('admin.dashboard') }}" class="px-4 py-2 rounded-full bg-white border border-slate-200 hover:border-senac-orange">Painel</a>
                 @hasanyrole('super_admin|admin_unidade|operador')
-                    <a href="{{ route('admin.actions.index', absolute: false) }}" class="px-4 py-2 rounded-full bg-white border border-slate-200 hover:border-senac-orange">Ações</a>
-                    <a href="{{ route('admin.events.index', absolute: false) }}" class="px-4 py-2 rounded-full bg-white border border-slate-200 hover:border-senac-orange">Eventos</a>
+                    <a href="{{ route('admin.actions.index') }}" class="px-4 py-2 rounded-full bg-white border border-slate-200 hover:border-senac-orange">Ações</a>
+                    <a href="{{ route('admin.events.index') }}" class="px-4 py-2 rounded-full bg-white border border-slate-200 hover:border-senac-orange">Eventos</a>
                 @endhasanyrole
                 @hasanyrole('super_admin|admin_unidade|estudante')
-                    <a href="{{ route('admin.projects.index', absolute: false) }}" class="px-4 py-2 rounded-full bg-white border border-slate-200 hover:border-senac-orange">Projetos Integradores</a>
-                    <a href="{{ route('admin.entrepreneurs.index', absolute: false) }}" class="px-4 py-2 rounded-full bg-white border border-slate-200 hover:border-senac-orange">Empreendedores</a>
+                    <a href="{{ route('admin.projects.index') }}" class="px-4 py-2 rounded-full bg-white border border-slate-200 hover:border-senac-orange">Projetos Integradores</a>
+                    <a href="{{ route('admin.entrepreneurs.index') }}" class="px-4 py-2 rounded-full bg-white border border-slate-200 hover:border-senac-orange">Empreendedores</a>
                 @endhasanyrole
                 @hasanyrole('super_admin|admin_unidade')
-                    <a href="{{ route('admin.approvals.index', absolute: false) }}" class="px-4 py-2 rounded-full bg-white border border-slate-200 hover:border-senac-orange">Aprovações</a>
-                    <a href="{{ route('admin.areas.index', absolute: false) }}" class="px-4 py-2 rounded-full bg-white border border-slate-200 hover:border-senac-orange">Áreas</a>
-                    <a href="{{ route('admin.users.index', absolute: false) }}" class="px-4 py-2 rounded-full bg-white border border-slate-200 hover:border-senac-orange">Usuarios</a>
+                    <a href="{{ route('admin.approvals.index') }}" class="px-4 py-2 rounded-full bg-white border border-slate-200 hover:border-senac-orange">Aprovações</a>
+                    <a href="{{ route('admin.areas.index') }}" class="px-4 py-2 rounded-full bg-white border border-slate-200 hover:border-senac-orange">Áreas</a>
+                    <a href="{{ route('admin.users.index') }}" class="px-4 py-2 rounded-full bg-white border border-slate-200 hover:border-senac-orange">Usuarios</a>
                 @endhasanyrole
                 @role('super_admin')
-                    <a href="{{ route('admin.unidades.index', absolute: false) }}" class="px-4 py-2 rounded-full bg-white border border-slate-200 hover:border-senac-orange">Unidades</a>
+                    <a href="{{ route('admin.unidades.index') }}" class="px-4 py-2 rounded-full bg-white border border-slate-200 hover:border-senac-orange">Unidades</a>
                 @endrole
-                <a href="{{ route('totem.home', absolute: false) }}" class="px-4 py-2 rounded-full bg-senac-blue text-white">Abrir Totem</a>
+                <a href="{{ route('totem.home') }}" class="px-4 py-2 rounded-full bg-senac-blue text-white">Abrir Totem</a>
             </nav>
         </header>
 
