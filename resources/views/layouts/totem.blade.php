@@ -124,33 +124,69 @@
                 : 'text-white/80 hover:text-white';
         @endphp
 
-        <header class="sticky top-0 z-30 bg-senac-blue shadow-lg shadow-slate-900/10">
-            <div class="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between gap-6">
-                <div class="flex items-center">
-                    <div class="h-12 w-[180px] md:w-[210px] flex items-center overflow-hidden">
+        <header x-data="{ open: false }" class="sticky top-0 z-30 bg-senac-blue shadow-lg shadow-slate-900/10">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
+                <div class="flex flex-shrink-0 items-center">
+                    <div class="h-8 sm:h-9 w-[70px] sm:w-[80px] md:w-[95px] lg:w-[110px] flex items-center overflow-hidden">
                         <img src="{{ asset('images/logo.png') }}" alt="{{ $totemUnitName }}" class="h-full w-auto object-contain">
                     </div>
                 </div>
-                <nav class="flex flex-wrap items-center gap-2 text-sm font-semibold">
-                    <a href="{{ route('totem.home') }}" class="px-4 py-2 rounded-full {{ $active('totem.home') }}">Inicio</a>
-                    <a href="{{ route('totem.actions.index') }}" class="px-4 py-2 rounded-full {{ $active('totem.actions.*') }}">Ações</a>
-                    <a href="{{ route('totem.events.index') }}" class="px-4 py-2 rounded-full {{ $active('totem.events.*') }}">Eventos</a>
-                    <a href="{{ route('totem.projects.index') }}" class="px-4 py-2 rounded-full {{ $active('totem.projects.*') }}">Projeto Integrador</a>
-                    <a href="{{ route('totem.entrepreneurs.index') }}" class="px-4 py-2 rounded-full {{ $active('totem.entrepreneurs.*') }}">Empreendedores</a>
-                    <a href="{{ route('totem.courses') }}" class="px-4 py-2 rounded-full {{ $active('totem.courses') }}">Cursos</a>
-                    <a href="{{ route('totem.bemestar') }}" class="px-4 py-2 rounded-full {{ $active('totem.bemestar') }}">Bem-estar</a>
-                    <div class="border-l border-white/30 mx-2"></div>
-                    @auth
-                        <span class="px-4 py-2 text-white/80">{{ Auth::user()->name }}</span>
-                        <form method="POST" action="{{ route('logout') }}" class="inline">
-                            @csrf
-                            <button type="submit" class="px-4 py-2 rounded-full bg-senac-orange text-white hover:bg-senac-orange/90 transition">Sair</button>
-                        </form>
-                    @else
-                        <button type="button" data-login-open class="px-4 py-2 rounded-full bg-senac-orange text-white hover:bg-senac-orange/90 transition">Entrar</button>
-                        <button type="button" data-register-open class="px-4 py-2 rounded-full border border-white text-white hover:bg-white/10 transition">Cadastrar</button>
-                    @endauth
+
+                <nav class="hidden sm:flex flex-1 flex-wrap justify-center items-center gap-1 text-[13px] font-semibold min-w-0">
+                    <a href="{{ route('totem.home') }}" class="px-2 py-1.5 rounded-full {{ $active('totem.home') }}">Inicio</a>
+                    <a href="{{ route('totem.actions.index') }}" class="px-2 py-1.5 rounded-full {{ $active('totem.actions.*') }}">Ações</a>
+                    <a href="{{ route('totem.events.index') }}" class="px-2 py-1.5 rounded-full {{ $active('totem.events.*') }}">Eventos</a>
+                    <a href="{{ route('totem.projects.index') }}" class="px-2 py-1.5 rounded-full {{ $active('totem.projects.*') }}">Projeto Integrador</a>
+                    <a href="{{ route('totem.entrepreneurs.index') }}" class="px-2 py-1.5 rounded-full {{ $active('totem.entrepreneurs.*') }}">Empreendedores</a>
+                    <a href="{{ route('totem.courses') }}" class="px-2 py-1.5 rounded-full {{ $active('totem.courses') }}">Cursos</a>
+                    <a href="{{ route('totem.bemestar') }}" class="px-2 py-1.5 rounded-full {{ $active('totem.bemestar') }}">Bem-estar</a>
                 </nav>
+
+                <div class="flex items-center gap-2">
+                    <div class="hidden sm:flex items-center gap-2">
+                        @auth
+                            <span class="px-2 py-1.5 text-white/80">{{ Auth::user()->name }}</span>
+                            <form method="POST" action="{{ route('logout') }}" class="inline">
+                                @csrf
+                                <button type="submit" class="px-2 py-1.5 rounded-full bg-senac-orange text-white hover:bg-senac-orange/90 transition text-sm">Sair</button>
+                            </form>
+                        @else
+                            <button type="button" data-login-open class="px-2 py-1.5 rounded-full bg-senac-orange text-white hover:bg-senac-orange/90 transition text-sm">Entrar</button>
+                            <button type="button" data-register-open class="px-2 py-1.5 rounded-full border border-white text-white hover:bg-white/10 transition text-sm">Cadastrar</button>
+                        @endauth
+                    </div>
+
+                    <button @click="open = ! open" class="sm:hidden inline-flex items-center justify-center p-3 rounded-xl bg-white text-senac-blue shadow-md shadow-slate-900/10 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-senac-blue">
+                        <span class="sr-only">Abrir menu</span>
+                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden border-t border-white/20 bg-senac-blue/95">
+                <div class="max-w-6xl mx-auto px-4 py-3 space-y-2">
+                    <a href="{{ route('totem.home') }}" class="block px-3 py-3 rounded-lg {{ $active('totem.home') }}">Inicio</a>
+                    <a href="{{ route('totem.actions.index') }}" class="block px-3 py-3 rounded-lg {{ $active('totem.actions.*') }}">Ações</a>
+                    <a href="{{ route('totem.events.index') }}" class="block px-3 py-3 rounded-lg {{ $active('totem.events.*') }}">Eventos</a>
+                    <a href="{{ route('totem.projects.index') }}" class="block px-3 py-3 rounded-lg {{ $active('totem.projects.*') }}">Projeto Integrador</a>
+                    <a href="{{ route('totem.entrepreneurs.index') }}" class="block px-3 py-3 rounded-lg {{ $active('totem.entrepreneurs.*') }}">Empreendedores</a>
+                    <a href="{{ route('totem.courses') }}" class="block px-3 py-3 rounded-lg {{ $active('totem.courses') }}">Cursos</a>
+                    <a href="{{ route('totem.bemestar') }}" class="block px-3 py-3 rounded-lg {{ $active('totem.bemestar') }}">Bem-estar</a>
+                    <div class="border-t border-white/20 pt-3">
+                        @auth
+                            <div class="mb-2 px-3 py-2 text-white/80">{{ Auth::user()->name }}</div>
+                            <form method="POST" action="{{ route('logout') }}" class="space-y-2">
+                                @csrf
+                                <button type="submit" class="w-full text-left px-3 py-3 rounded-lg bg-senac-orange text-white hover:bg-senac-orange/90 transition">Sair</button>
+                            </form>
+                        @else
+                            <button type="button" data-login-open class="w-full text-left px-3 py-3 rounded-lg bg-senac-orange text-white hover:bg-senac-orange/90 transition">Entrar</button>
+                            <button type="button" data-register-open class="w-full text-left px-3 py-3 rounded-lg border border-white text-white hover:bg-white/10 transition">Cadastrar</button>
+                        @endauth
+                    </div>
+                </div>
             </div>
         </header>
 
