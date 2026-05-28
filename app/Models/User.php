@@ -75,4 +75,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Entrepreneur::class, 'created_by');
     }
+
+    public function tutorialCompletions(): HasMany
+    {
+        return $this->hasMany(TutorialCompletion::class);
+    }
 }

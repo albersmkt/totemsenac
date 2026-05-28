@@ -85,8 +85,12 @@
                     <a href="{{ route('admin.areas.index') }}" class="px-4 py-2 rounded-full bg-senac-blue text-white font-semibold">Gerenciar Áreas</a>
                     <a href="{{ route('admin.users.index') }}" class="px-4 py-2 rounded-full bg-slate-900 text-white font-semibold">Gerenciar Usuarios</a>
                 @endhasanyrole
+                @hasanyrole('operador|estudante')
+                    <a href="{{ route('admin.tutorial.index') }}" class="px-4 py-2 rounded-full bg-emerald-600 text-white font-semibold">Tutorial</a>
+                @endhasanyrole
                 @role('super_admin')
                     <a href="{{ route('admin.unidades.index') }}" class="px-4 py-2 rounded-full bg-senac-orange text-white font-semibold">Gerenciar Unidades</a>
+                    <a href="{{ route('admin.tutorial-videos.index') }}" class="px-4 py-2 rounded-full bg-senac-blue text-white font-semibold">Gerenciar Tutoriais</a>
                 @endrole
             </div>
         </div>

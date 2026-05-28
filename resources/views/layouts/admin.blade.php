@@ -72,7 +72,11 @@
                 @endhasanyrole
                 @role('super_admin')
                     <a href="{{ route('admin.unidades.index') }}" class="px-4 py-2 rounded-full bg-white border border-slate-200 hover:border-senac-orange">Unidades</a>
+                    <a href="{{ route('admin.tutorial-videos.index') }}" class="px-4 py-2 rounded-full bg-white border border-slate-200 hover:border-senac-orange">Tutoriais</a>
                 @endrole
+                @hasanyrole('operador|estudante')
+                    <a href="{{ route('admin.tutorial.index') }}" class="px-4 py-2 rounded-full bg-white border border-slate-200 hover:border-senac-orange">Tutorial</a>
+                @endhasanyrole
                 @php
                     $totemRouteParams = [];
                     if ($adminUser?->unidade_id) {

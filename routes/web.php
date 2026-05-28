@@ -7,6 +7,8 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EntrepreneurController as AdminEntrepreneurController;
 use App\Http\Controllers\Admin\EventController as AdminEventController;
 use App\Http\Controllers\Admin\IntegratorProjectController as AdminProjectController;
+use App\Http\Controllers\Admin\TutorialController;
+use App\Http\Controllers\Admin\TutorialVideoController;
 use App\Http\Controllers\Admin\UnidadeController as AdminUnidadeController;
 use App\Http\Controllers\Admin\UnitContextController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
@@ -53,6 +55,9 @@ Route::prefix('admin')
     ->middleware(['auth', 'role:super_admin|admin_unidade|operador|estudante'])
     ->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/tutorial', [TutorialController::class, 'index'])->name('tutorial.index');
+        Route::post('/tutorial/videos/{tutorialVideo}/concluir', [TutorialController::class, 'complete'])->name('tutorial.complete');
+        Route::get('/tutorial/certificado', [TutorialController::class, 'certificate'])->name('tutorial.certificate');
 
         Route::middleware('role:super_admin|admin_unidade|operador')->group(function () {
             Route::resource('acoes', AdminActionController::class)
@@ -82,6 +87,11 @@ Route::prefix('admin')
             Route::resource('unidades', AdminUnidadeController::class)
                 ->parameters(['unidades' => 'unidade'])
                 ->except(['show']);
+
+            Route::resource('tutoriais', TutorialVideoController::class)
+                ->parameters(['tutoriais' => 'tutorialVideo'])
+                ->except(['show'])
+                ->names('tutorial-videos');
         });
 
         Route::middleware('role:super_admin|admin_unidade')->group(function () {
