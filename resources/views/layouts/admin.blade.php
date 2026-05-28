@@ -81,7 +81,7 @@
                         $totemRouteParams['unidade'] = $selectedUnitId;
                     }
                 @endphp
-                <a href="{{ route('totem.home', $totemRouteParams) }}" class="px-4 py-2 rounded-full bg-senac-blue text-white">Abrir Totem</a>
+                <a href="{{ route('totem.home', $totemRouteParams) }}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-full bg-senac-blue text-white">Abrir Totem</a>
             </nav>
         </header>
 

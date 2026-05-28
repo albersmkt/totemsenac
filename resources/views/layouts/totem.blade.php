@@ -146,7 +146,7 @@
                 <div class="flex items-center gap-2">
                     <div class="hidden sm:flex items-center gap-2">
                         @auth
-                            <span class="px-2 py-1.5 text-white/80">{{ Auth::user()->name }}</span>
+                            <a href="{{ route('admin.dashboard') }}" class="px-2 py-1.5 text-white/80 hover:text-white">{{ Auth::user()->name }}</a>
                             <form method="POST" action="{{ route('logout') }}" class="inline">
                                 @csrf
                                 <button type="submit" class="px-2 py-1.5 rounded-full bg-senac-orange text-white hover:bg-senac-orange/90 transition text-sm">Sair</button>
@@ -177,7 +177,7 @@
                     <a href="{{ route('totem.bemestar', $totemRouteParams) }}" class="block px-3 py-3 rounded-lg {{ $active('totem.bemestar') }}">Bem-estar</a>
                     <div class="border-t border-white/20 pt-3">
                         @auth
-                            <div class="mb-2 px-3 py-2 text-white/80">{{ Auth::user()->name }}</div>
+                            <a href="{{ route('admin.dashboard') }}" class="mb-2 block px-3 py-2 rounded-lg text-white/80 hover:text-white hover:bg-white/10">{{ Auth::user()->name }}</a>
                             <form method="POST" action="{{ route('logout') }}" class="space-y-2">
                                 @csrf
                                 <button type="submit" class="w-full text-left px-3 py-3 rounded-lg bg-senac-orange text-white hover:bg-senac-orange/90 transition">Sair</button>
