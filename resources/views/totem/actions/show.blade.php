@@ -35,7 +35,7 @@
                         </span>
                     @endif
                 </div>
-                <p class="text-lg text-slate-700 leading-relaxed">{{ $action->description }}</p>
+                <p class="text-lg text-slate-700 leading-relaxed">{!! nl2br(e($action->description)) !!}</p>
             </div>
         </div>
     </div>

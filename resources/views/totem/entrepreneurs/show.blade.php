@@ -24,7 +24,7 @@
                     {{ $entrepreneur->category === 'salgados_doces' ? 'Salgados/Doces' : ucfirst($entrepreneur->category) }}
                 </span>
                 @if ($entrepreneur->description)
-                    <p class="text-lg text-slate-700 leading-relaxed">{{ $entrepreneur->description }}</p>
+                    <p class="text-lg text-slate-700 leading-relaxed">{!! nl2br(e($entrepreneur->description)) !!}</p>
                 @else
                     <p class="text-slate-500">Descricao nao informada.</p>
                 @endif

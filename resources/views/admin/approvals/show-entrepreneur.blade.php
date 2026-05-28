@@ -27,7 +27,7 @@
             </div>
             <div>
                 <p class="text-xs uppercase tracking-[0.2em] text-slate-400 mb-2">Descrição</p>
-                <p class="text-sm text-slate-600 leading-relaxed">{{ $entrepreneur->description ?: 'Nao informado.' }}</p>
+                <p class="text-sm text-slate-600 leading-relaxed">{!! nl2br(e($entrepreneur->description ?: 'Nao informado.')) !!}</p>
             </div>
         </div>
 

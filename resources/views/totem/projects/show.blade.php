@@ -30,7 +30,7 @@
                     Turma {{ $project->class_group }}
                 </span>
             </div>
-            <p class="text-lg text-slate-700 leading-relaxed">{{ $project->description }}</p>
+            <p class="text-lg text-slate-700 leading-relaxed">{!! nl2br(e($project->description)) !!}</p>
         </div>
     </div>
 

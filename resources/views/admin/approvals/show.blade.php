@@ -42,7 +42,7 @@
                 </div>
                 <div>
                     <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Descricao</p>
-                    <p class="leading-relaxed">{{ $project->description }}</p>
+                    <p class="leading-relaxed">{!! nl2br(e($project->description)) !!}</p>
                 </div>
             </div>
         </div>
