@@ -1,9 +1,13 @@
 @extends('layouts.totem')
 
+@php
+    $totemRouteParams = request()->query('unidade') ? ['unidade' => request()->query('unidade')] : [];
+@endphp
+
 @section('content')
     <div class="flex items-center justify-between mb-6">
         <h2 class="font-display text-3xl text-senac-blue">Atendimento Bem-estar e Beleza</h2>
-        <a href="{{ route('totem.home') }}" class="px-5 py-2 rounded-full bg-senac-blue text-white font-semibold">Voltar</a>
+        <a href="{{ route('totem.home', $totemRouteParams) }}" class="px-5 py-2 rounded-full bg-senac-blue text-white font-semibold">Voltar</a>
     </div>
 
     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-12 mb-8">

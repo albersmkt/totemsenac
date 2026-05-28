@@ -7,13 +7,19 @@ use App\Models\Action;
 use App\Models\Entrepreneur;
 use App\Models\Event;
 use App\Models\IntegratorProject;
+use App\Models\Unidade;
 use App\Support\UnitContext;
+use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $unitId = UnitContext::resolveTotemUnitId(request());
+        $unitId = UnitContext::resolveTotemUnitId($request);
+
+        $requestedUnit = $request->query('unidade');
+        $showUnits = ! (is_numeric($requestedUnit) && (int) $requestedUnit === (int) $unitId);
+        $totemRouteParams = $showUnits ? [] : ['unidade' => $unitId];
 
         $actions = Action::where('status', 'published')
             ->where('unidade_id', $unitId)
@@ -53,7 +59,7 @@ class HomeController extends Controller
                 'title' => $heroAction->title,
                 'description' => $heroAction->description,
                 'image' => $heroAction->cover_image,
-                'link' => route('totem.actions.show', $heroAction),
+                'link' => route('totem.actions.show', ['action' => $heroAction] + $totemRouteParams),
             ]);
         }
 
@@ -67,7 +73,7 @@ class HomeController extends Controller
                 'title' => $heroEvent->title,
                 'description' => $heroEvent->description,
                 'image' => $heroEvent->cover_image,
-                'link' => route('totem.events.show', $heroEvent),
+                'link' => route('totem.events.show', ['event' => $heroEvent] + $totemRouteParams),
             ]);
         }
 
@@ -81,7 +87,7 @@ class HomeController extends Controller
                 'title' => $heroProject->title,
                 'description' => $heroProject->description,
                 'image' => $heroProject->cover_image,
-                'link' => route('totem.projects.show', $heroProject),
+                'link' => route('totem.projects.show', ['project' => $heroProject] + $totemRouteParams),
             ]);
         }
 
@@ -96,10 +102,17 @@ class HomeController extends Controller
                 'title' => $heroEntrepreneur->display_name,
                 'description' => $heroEntrepreneur->description ?? 'Conheca negocios locais e criativos.',
                 'image' => $heroEntrepreneur->images->first()?->path,
-                'link' => route('totem.entrepreneurs.show', $heroEntrepreneur),
+                'link' => route('totem.entrepreneurs.show', ['entrepreneur' => $heroEntrepreneur] + $totemRouteParams),
             ]);
         }
 
-        return view('totem.home', compact('actions', 'events', 'projects', 'entrepreneurs', 'heroSlides'));
+        $unidades = collect();
+        if ($showUnits) {
+            $unidades = Unidade::query()
+                ->orderBy('nome')
+                ->get();
+        }
+
+        return view('totem.home', compact('actions', 'events', 'projects', 'entrepreneurs', 'heroSlides', 'unidades', 'showUnits', 'totemRouteParams'));
     }
 }

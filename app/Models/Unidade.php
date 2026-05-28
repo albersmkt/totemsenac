@@ -15,6 +15,7 @@ class Unidade extends Model
     protected $fillable = [
         'nome',
         'cidade',
+        'image',
     ];
 
     public function users(): HasMany

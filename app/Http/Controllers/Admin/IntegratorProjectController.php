@@ -78,9 +78,9 @@ class IntegratorProjectController extends Controller
             ],
             'member_names' => 'nullable|string|max:2000',
             'status' => 'nullable|in:pending,rejected,published,archived',
-            'cover_image' => 'nullable|image|max:8192',
+            'cover_image' => 'nullable|file|mimes:jpeg,jpg,png,gif,webp,bmp,svg|max:8192',
             'gallery' => 'nullable|array',
-            'gallery.*' => 'image|max:8192',
+            'gallery.*' => 'file|mimes:jpeg,jpg,png,gif,webp,bmp,svg|max:8192',
         ]);
 
         if ($request->hasFile('cover_image')) {
@@ -154,10 +154,10 @@ class IntegratorProjectController extends Controller
             ],
             'member_names' => 'nullable|string|max:2000',
             'status' => 'nullable|in:pending,rejected,published,archived',
-            'cover_image' => 'nullable|image|max:8192',
+            'cover_image' => 'nullable|file|mimes:jpeg,jpg,png,gif,webp,bmp,svg|max:8192',
             'remove_cover' => 'nullable|boolean',
             'gallery' => 'nullable|array',
-            'gallery.*' => 'image|max:8192',
+            'gallery.*' => 'file|mimes:jpeg,jpg,png,gif,webp,bmp,svg|max:8192',
             'remove_images' => 'nullable|array',
             'remove_images.*' => 'integer|exists:integrator_project_images,id',
         ]);

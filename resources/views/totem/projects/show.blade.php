@@ -1,9 +1,13 @@
 @extends('layouts.totem')
 
+@php
+    $totemRouteParams = request()->query('unidade') ? ['unidade' => request()->query('unidade')] : [];
+@endphp
+
 @section('content')
     <div class="mb-6 flex items-center justify-between">
         <h2 class="font-display text-3xl text-slate-900">{{ $project->title }}</h2>
-        <a href="{{ route('totem.projects.index') }}" class="px-5 py-2 rounded-full bg-senac-blue text-white font-semibold">Voltar</a>
+        <a href="{{ route('totem.projects.index', $totemRouteParams) }}" class="px-5 py-2 rounded-full bg-senac-blue text-white font-semibold">Voltar</a>
     </div>
 
     <div class="totem-card mb-8">

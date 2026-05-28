@@ -56,7 +56,7 @@ class ActionController extends Controller
             'end_at' => 'nullable|date|after_or_equal:start_at',
             'location' => 'nullable|string|max:255',
             'status' => 'nullable|in:pending,draft,published,archived',
-            'cover_image' => 'nullable|image|max:8192',
+            'cover_image' => 'nullable|file|mimes:jpeg,jpg,png,gif,webp,bmp,svg|max:8192',
         ]);
 
         if ($request->hasFile('cover_image')) {
@@ -105,7 +105,7 @@ class ActionController extends Controller
             'end_at' => 'nullable|date|after_or_equal:start_at',
             'location' => 'nullable|string|max:255',
             'status' => 'nullable|in:pending,draft,published,archived',
-            'cover_image' => 'nullable|image|max:8192',
+            'cover_image' => 'nullable|file|mimes:jpeg,jpg,png,gif,webp,bmp,svg|max:8192',
             'remove_cover' => 'nullable|boolean',
         ]);
 

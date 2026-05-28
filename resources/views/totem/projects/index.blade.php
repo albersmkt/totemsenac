@@ -2,12 +2,14 @@
 
 @php
     use Illuminate\Support\Str;
+
+    $totemRouteParams = request()->query('unidade') ? ['unidade' => request()->query('unidade')] : [];
 @endphp
 
 @section('content')
     <div class="flex items-center justify-between mb-6">
         <h2 class="font-display text-3xl text-senac-blue">Projeto Integrador</h2>
-        <a href="{{ route('totem.home') }}" class="px-5 py-2 rounded-full bg-senac-blue text-white font-semibold">Voltar</a>
+        <a href="{{ route('totem.home', $totemRouteParams) }}" class="px-5 py-2 rounded-full bg-senac-blue text-white font-semibold">Voltar</a>
     </div>
 
     <div class="mb-6">
@@ -19,7 +21,7 @@
         </div>
         <div class="grid grid-cols-2 gap-6">
             @forelse ($projects as $project)
-                <a href="{{ route('totem.projects.show', $project) }}" class="totem-card">
+                <a href="{{ route('totem.projects.show', ['project' => $project] + $totemRouteParams) }}" class="totem-card">
                     <div class="h-48 bg-slate-100">
                         @if ($project->cover_image)
                             <img src="{{ asset('storage/' . $project->cover_image) }}" alt="{{ $project->title }}" class="h-full w-full object-cover">

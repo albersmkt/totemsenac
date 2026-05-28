@@ -8,6 +8,7 @@ use App\Models\Unidade;
 use App\Support\UnitContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
@@ -43,11 +44,13 @@ class UnidadeController extends Controller
         $data = $request->validate([
             'nome' => ['required', 'string', 'max:150', 'unique:unidades,nome'],
             'cidade' => ['required', 'string', 'max:120'],
+            'image' => ['nullable', 'file', 'mimes:jpeg,jpg,png,gif,webp,bmp,svg', 'max:2048'],
         ]);
 
         $unidade = Unidade::create([
             'nome' => $data['nome'],
             'cidade' => $data['cidade'],
+            'image' => $request->hasFile('image') ? $request->file('image')->store('unidades', 'public') : null,
         ]);
 
         $this->cloneDefaultAreasToUnit($unidade);
@@ -72,7 +75,16 @@ class UnidadeController extends Controller
                 Rule::unique('unidades', 'nome')->ignore($unidade->id),
             ],
             'cidade' => ['required', 'string', 'max:120'],
+            'image' => ['nullable', 'file', 'mimes:jpeg,jpg,png,gif,webp,bmp,svg', 'max:2048'],
         ]);
+
+        if ($request->hasFile('image')) {
+            if ($unidade->image) {
+                Storage::disk('public')->delete($unidade->image);
+            }
+
+            $data['image'] = $request->file('image')->store('unidades', 'public');
+        }
 
         $unidade->update($data);
 
@@ -96,6 +108,11 @@ class UnidadeController extends Controller
         }
 
         $unidade->areas()->delete();
+
+        if ($unidade->image) {
+            Storage::disk('public')->delete($unidade->image);
+        }
+
         $unidade->delete();
 
         return redirect()

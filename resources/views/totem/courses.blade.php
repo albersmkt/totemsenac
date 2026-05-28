@@ -1,5 +1,9 @@
 @extends('layouts.totem')
 
+@php
+    $totemRouteParams = request()->query('unidade') ? ['unidade' => request()->query('unidade')] : [];
+@endphp
+
 @section('content')
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div>
@@ -8,7 +12,7 @@
                 Visualize o site oficial do Senac dentro do totem. Para abrir no celular, use o QR Code.
             </p>
         </div>
-        <a href="{{ route('totem.home') }}" class="px-5 py-2 rounded-full bg-senac-blue text-white font-semibold">Voltar</a>
+        <a href="{{ route('totem.home', $totemRouteParams) }}" class="px-5 py-2 rounded-full bg-senac-blue text-white font-semibold">Voltar</a>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">

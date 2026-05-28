@@ -122,6 +122,7 @@
             $active = fn (string $route) => request()->routeIs($route)
                 ? 'bg-senac-orange text-white'
                 : 'text-white/80 hover:text-white';
+            $totemRouteParams = request()->query('unidade') ? ['unidade' => request()->query('unidade')] : [];
         @endphp
 
         <header x-data="{ open: false }" class="sticky top-0 z-30 bg-senac-blue shadow-lg shadow-slate-900/10">
@@ -133,13 +134,13 @@
                 </div>
 
                 <nav class="hidden sm:flex flex-1 flex-wrap justify-center items-center gap-1 text-[13px] font-semibold min-w-0">
-                    <a href="{{ route('totem.home') }}" class="px-2 py-1.5 rounded-full {{ $active('totem.home') }}">Inicio</a>
-                    <a href="{{ route('totem.actions.index') }}" class="px-2 py-1.5 rounded-full {{ $active('totem.actions.*') }}">Ações</a>
-                    <a href="{{ route('totem.events.index') }}" class="px-2 py-1.5 rounded-full {{ $active('totem.events.*') }}">Eventos</a>
-                    <a href="{{ route('totem.projects.index') }}" class="px-2 py-1.5 rounded-full {{ $active('totem.projects.*') }}">Projeto Integrador</a>
-                    <a href="{{ route('totem.entrepreneurs.index') }}" class="px-2 py-1.5 rounded-full {{ $active('totem.entrepreneurs.*') }}">Empreendedores</a>
-                    <a href="{{ route('totem.courses') }}" class="px-2 py-1.5 rounded-full {{ $active('totem.courses') }}">Cursos</a>
-                    <a href="{{ route('totem.bemestar') }}" class="px-2 py-1.5 rounded-full {{ $active('totem.bemestar') }}">Bem-estar</a>
+                    <a href="{{ route('totem.home', $totemRouteParams) }}" class="px-2 py-1.5 rounded-full {{ $active('totem.home') }}">Inicio</a>
+                    <a href="{{ route('totem.actions.index', $totemRouteParams) }}" class="px-2 py-1.5 rounded-full {{ $active('totem.actions.*') }}">Ações</a>
+                    <a href="{{ route('totem.events.index', $totemRouteParams) }}" class="px-2 py-1.5 rounded-full {{ $active('totem.events.*') }}">Eventos</a>
+                    <a href="{{ route('totem.projects.index', $totemRouteParams) }}" class="px-2 py-1.5 rounded-full {{ $active('totem.projects.*') }}">Projeto Integrador</a>
+                    <a href="{{ route('totem.entrepreneurs.index', $totemRouteParams) }}" class="px-2 py-1.5 rounded-full {{ $active('totem.entrepreneurs.*') }}">Empreendedores</a>
+                    <a href="{{ route('totem.courses', $totemRouteParams) }}" class="px-2 py-1.5 rounded-full {{ $active('totem.courses') }}">Cursos</a>
+                    <a href="{{ route('totem.bemestar', $totemRouteParams) }}" class="px-2 py-1.5 rounded-full {{ $active('totem.bemestar') }}">Bem-estar</a>
                 </nav>
 
                 <div class="flex items-center gap-2">
@@ -167,13 +168,13 @@
             </div>
             <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden border-t border-white/20 bg-senac-blue/95">
                 <div class="max-w-6xl mx-auto px-4 py-3 space-y-2">
-                    <a href="{{ route('totem.home') }}" class="block px-3 py-3 rounded-lg {{ $active('totem.home') }}">Inicio</a>
-                    <a href="{{ route('totem.actions.index') }}" class="block px-3 py-3 rounded-lg {{ $active('totem.actions.*') }}">Ações</a>
-                    <a href="{{ route('totem.events.index') }}" class="block px-3 py-3 rounded-lg {{ $active('totem.events.*') }}">Eventos</a>
-                    <a href="{{ route('totem.projects.index') }}" class="block px-3 py-3 rounded-lg {{ $active('totem.projects.*') }}">Projeto Integrador</a>
-                    <a href="{{ route('totem.entrepreneurs.index') }}" class="block px-3 py-3 rounded-lg {{ $active('totem.entrepreneurs.*') }}">Empreendedores</a>
-                    <a href="{{ route('totem.courses') }}" class="block px-3 py-3 rounded-lg {{ $active('totem.courses') }}">Cursos</a>
-                    <a href="{{ route('totem.bemestar') }}" class="block px-3 py-3 rounded-lg {{ $active('totem.bemestar') }}">Bem-estar</a>
+                    <a href="{{ route('totem.home', $totemRouteParams) }}" class="block px-3 py-3 rounded-lg {{ $active('totem.home') }}">Inicio</a>
+                    <a href="{{ route('totem.actions.index', $totemRouteParams) }}" class="block px-3 py-3 rounded-lg {{ $active('totem.actions.*') }}">Ações</a>
+                    <a href="{{ route('totem.events.index', $totemRouteParams) }}" class="block px-3 py-3 rounded-lg {{ $active('totem.events.*') }}">Eventos</a>
+                    <a href="{{ route('totem.projects.index', $totemRouteParams) }}" class="block px-3 py-3 rounded-lg {{ $active('totem.projects.*') }}">Projeto Integrador</a>
+                    <a href="{{ route('totem.entrepreneurs.index', $totemRouteParams) }}" class="block px-3 py-3 rounded-lg {{ $active('totem.entrepreneurs.*') }}">Empreendedores</a>
+                    <a href="{{ route('totem.courses', $totemRouteParams) }}" class="block px-3 py-3 rounded-lg {{ $active('totem.courses') }}">Cursos</a>
+                    <a href="{{ route('totem.bemestar', $totemRouteParams) }}" class="block px-3 py-3 rounded-lg {{ $active('totem.bemestar') }}">Bem-estar</a>
                     <div class="border-t border-white/20 pt-3">
                         @auth
                             <div class="mb-2 px-3 py-2 text-white/80">{{ Auth::user()->name }}</div>
@@ -373,7 +374,7 @@
     <script>
         (function () {
             const INACTIVITY_LIMIT = 45 * 1000;
-            const HOME_URL = "{{ route('totem.home') }}";
+            const HOME_URL = "{{ route('totem.home', $totemRouteParams) }}";
             let inactivityTimer = null;
 
             const resetTimer = () => {
@@ -382,11 +383,7 @@
                 }
 
                 inactivityTimer = setTimeout(() => {
-                    if (window.location.href !== HOME_URL) {
-                        window.location.href = HOME_URL;
-                    } else {
-                        window.location.reload();
-                    }
+                    window.location.href = HOME_URL;
                 }, INACTIVITY_LIMIT);
             };
 

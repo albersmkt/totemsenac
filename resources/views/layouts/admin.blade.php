@@ -73,7 +73,15 @@
                 @role('super_admin')
                     <a href="{{ route('admin.unidades.index') }}" class="px-4 py-2 rounded-full bg-white border border-slate-200 hover:border-senac-orange">Unidades</a>
                 @endrole
-                <a href="{{ route('totem.home') }}" class="px-4 py-2 rounded-full bg-senac-blue text-white">Abrir Totem</a>
+                @php
+                    $totemRouteParams = [];
+                    if ($adminUser?->unidade_id) {
+                        $totemRouteParams['unidade'] = $adminUser->unidade_id;
+                    } elseif ($selectedUnitId !== null) {
+                        $totemRouteParams['unidade'] = $selectedUnitId;
+                    }
+                @endphp
+                <a href="{{ route('totem.home', $totemRouteParams) }}" class="px-4 py-2 rounded-full bg-senac-blue text-white">Abrir Totem</a>
             </nav>
         </header>
 
