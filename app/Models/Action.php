@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -34,5 +35,31 @@ class Action extends Model
     public function unidade(): BelongsTo
     {
         return $this->belongsTo(Unidade::class);
+    }
+
+    public function scopeVisibleOnTotem(Builder $query): Builder
+    {
+        $today = today()->toDateString();
+
+        return $query
+            ->where('status', 'published')
+            ->where(function (Builder $query) use ($today) {
+                $query
+                    ->whereDate('end_at', '>=', $today)
+                    ->orWhere(function (Builder $query) use ($today) {
+                        $query
+                            ->whereNull('end_at')
+                            ->whereDate('start_at', '>=', $today);
+                    });
+            });
+    }
+
+    public function isVisibleOnTotem(): bool
+    {
+        $expiresAt = $this->end_at ?? $this->start_at;
+
+        return $this->status === 'published'
+            && $expiresAt !== null
+            && $expiresAt->toDateString() >= today()->toDateString();
     }
 }

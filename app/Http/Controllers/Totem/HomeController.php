@@ -21,13 +21,13 @@ class HomeController extends Controller
         $showUnits = ! (is_numeric($requestedUnit) && (int) $requestedUnit === (int) $unitId);
         $totemRouteParams = $showUnits ? [] : ['unidade' => $unitId];
 
-        $actions = Action::where('status', 'published')
+        $actions = Action::visibleOnTotem()
             ->where('unidade_id', $unitId)
             ->orderByDesc('start_at')
             ->limit(8)
             ->get();
 
-        $events = Event::where('status', 'published')
+        $events = Event::visibleOnTotem()
             ->where('unidade_id', $unitId)
             ->orderByDesc('start_at')
             ->limit(8)
@@ -49,7 +49,7 @@ class HomeController extends Controller
 
         $heroSlides = collect();
 
-        $heroAction = Action::where('status', 'published')
+        $heroAction = Action::visibleOnTotem()
             ->where('unidade_id', $unitId)
             ->orderByDesc('start_at')
             ->first();
@@ -63,7 +63,7 @@ class HomeController extends Controller
             ]);
         }
 
-        $heroEvent = Event::where('status', 'published')
+        $heroEvent = Event::visibleOnTotem()
             ->where('unidade_id', $unitId)
             ->orderByDesc('start_at')
             ->first();
