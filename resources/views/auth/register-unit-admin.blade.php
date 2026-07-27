@@ -1,14 +1,14 @@
 <x-guest-layout>
-    <x-slot name="sideTitle">Gestão de operadores</x-slot>
-    <x-slot name="sideDescription">Cadastre a equipe operacional responsável por ações, eventos e conteúdos do totem.</x-slot>
-    <x-slot name="pageTitle">Cadastro de operador</x-slot>
-    <x-slot name="pageDescription">Area para equipe operacional da unidade.</x-slot>
+    <x-slot name="sideTitle">Gestão administrativa da unidade</x-slot>
+    <x-slot name="sideDescription">Cadastre responsáveis pela administração, aprovações e gestão dos conteúdos da unidade.</x-slot>
+    <x-slot name="pageTitle">Cadastro de admin da unidade</x-slot>
+    <x-slot name="pageDescription">Area para equipe administrativa da unidade.</x-slot>
 
-    <form method="POST" action="{{ route('register.operator') }}">
+    <form method="POST" action="{{ route('register.unit-admin') }}">
         @csrf
 
         <div class="mb-4 text-sm text-gray-600">
-            Cadastro de operador.
+            Cadastro de admin da unidade.
         </div>
 
         <div>

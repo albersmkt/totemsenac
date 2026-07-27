@@ -27,9 +27,9 @@
 
                     <div class="max-w-md">
                         <p class="text-xs uppercase tracking-[0.3em] text-white/70">Totem Digital</p>
-                        <h1 class="mt-4 font-display text-4xl leading-tight">Painel administrativo e area do aluno</h1>
+                        <h1 class="mt-4 font-display text-4xl leading-tight">{{ $sideTitle ?? 'Painel administrativo' }}</h1>
                         <p class="mt-4 text-white/80">
-                            Gerencie ações, eventos, projetos integradores e empreendedores com identidade Senac.
+                            {{ $sideDescription ?? 'Gerencie ações, eventos, projetos integradores e empreendedores com identidade Senac.' }}
                         </p>
                     </div>
 
@@ -45,8 +45,8 @@
                             <span class="inline-flex items-center rounded-full bg-senac-orange/10 px-3 py-1 text-xs font-semibold text-senac-orange">
                                 Senac Registro
                             </span>
-                            <h2 class="mt-4 font-display text-3xl text-slate-900">Acesso ao sistema</h2>
-                            <p class="mt-2 text-sm text-slate-500">Area para alunos e equipe administrativa.</p>
+                            <h2 class="mt-4 font-display text-3xl text-slate-900">{{ $pageTitle ?? 'Acesso ao sistema' }}</h2>
+                            <p class="mt-2 text-sm text-slate-500">{{ $pageDescription ?? 'Area para equipe administrativa.' }}</p>
                         </div>
 
                         <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-lg">

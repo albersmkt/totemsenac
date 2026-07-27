@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredOperatorController;
+use App\Http\Controllers\Auth\RegisteredUnitAdminController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +23,11 @@ Route::middleware('guest')->group(function () {
         ->name('register.operator');
 
     Route::post('register-operador', [RegisteredOperatorController::class, 'store']);
+
+    Route::get('register-admin-unidade', [RegisteredUnitAdminController::class, 'create'])
+        ->name('register.unit-admin');
+
+    Route::post('register-admin-unidade', [RegisteredUnitAdminController::class, 'store']);
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');

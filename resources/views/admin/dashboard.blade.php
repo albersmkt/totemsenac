@@ -68,6 +68,65 @@
         @endrole
     </div>
 
+    @role('super_admin')
+        @php
+            $registrationLinks = [
+                [
+                    'label' => 'Cadastro de operador',
+                    'description' => 'Envie este link para responsáveis que irão cadastrar operadores da unidade.',
+                    'url' => route('register.operator'),
+                ],
+                [
+                    'label' => 'Cadastro de admin da unidade',
+                    'description' => 'Envie este link para responsáveis pela administração de uma unidade.',
+                    'url' => route('register.unit-admin'),
+                ],
+            ];
+        @endphp
+
+        <div class="mt-10 totem-card p-6">
+            <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                    <h3 class="font-display text-xl text-slate-900">Links de cadastro</h3>
+                    <p class="mt-2 text-sm text-slate-600">
+                        Copie e encaminhe os links para liberar o cadastro de operadores e admins de unidade.
+                    </p>
+                </div>
+                <span class="self-start rounded-full bg-senac-orange/10 px-3 py-1 text-xs font-semibold text-senac-orange">
+                    Super admin
+                </span>
+            </div>
+
+            <div class="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-2">
+                @foreach ($registrationLinks as $link)
+                    <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                        <p class="font-semibold text-slate-900">{{ $link['label'] }}</p>
+                        <p class="mt-1 text-sm text-slate-500">{{ $link['description'] }}</p>
+                        <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+                            <input
+                                type="text"
+                                readonly
+                                value="{{ $link['url'] }}"
+                                class="w-full rounded-xl border-slate-200 bg-white text-sm text-slate-700"
+                                aria-label="{{ $link['label'] }}"
+                                onclick="this.select()"
+                            >
+                            <button
+                                type="button"
+                                x-data="{ copied: false }"
+                                x-on:click="navigator.clipboard.writeText(@js($link['url'])); copied = true; setTimeout(() => copied = false, 1800)"
+                                class="inline-flex shrink-0 items-center justify-center rounded-full bg-senac-blue px-4 py-2 text-sm font-semibold text-white hover:bg-senac-blue/90"
+                            >
+                                <span x-show="! copied">Copiar</span>
+                                <span x-cloak x-show="copied">Copiado</span>
+                            </button>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    @endrole
+
     <div class="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div class="totem-card p-6">
             <h3 class="font-display text-xl text-slate-900">Atalhos</h3>

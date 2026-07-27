@@ -7,20 +7,31 @@ return new class extends Migration
 {
     public function up(): void
     {
-        DB::statement("ALTER TABLE entrepreneurs MODIFY category ENUM('sobremesa','salgado','ambos','salgados_doces','servicos')");
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement("ALTER TABLE entrepreneurs MODIFY category ENUM('sobremesa','salgado','ambos','salgados_doces','servicos')");
+        }
+
         DB::table('entrepreneurs')
             ->where('category', 'ambos')
             ->update(['category' => 'salgados_doces']);
-        DB::statement("ALTER TABLE entrepreneurs MODIFY category ENUM('sobremesa','salgado','salgados_doces','servicos')");
+
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement("ALTER TABLE entrepreneurs MODIFY category ENUM('sobremesa','salgado','salgados_doces','servicos')");
+        }
     }
 
     public function down(): void
     {
-        DB::statement("ALTER TABLE entrepreneurs MODIFY category ENUM('sobremesa','salgado','ambos','salgados_doces','servicos')");
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement("ALTER TABLE entrepreneurs MODIFY category ENUM('sobremesa','salgado','ambos','salgados_doces','servicos')");
+        }
+
         DB::table('entrepreneurs')
             ->where('category', 'salgados_doces')
             ->update(['category' => 'ambos']);
 
-        DB::statement("ALTER TABLE entrepreneurs MODIFY category ENUM('sobremesa','salgado','ambos','servicos')");
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement("ALTER TABLE entrepreneurs MODIFY category ENUM('sobremesa','salgado','ambos','servicos')");
+        }
     }
 };

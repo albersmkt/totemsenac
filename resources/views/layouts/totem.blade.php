@@ -324,7 +324,7 @@
                                         <option value="">Selecione</option>
                                         @foreach ($unidadesCadastro as $unidade)
                                             <option value="{{ $unidade->id }}" @selected((string) old('unidade_id') === (string) $unidade->id)>
-                                                {{ $unidade->nome }} - {{ $unidade->cidade }}
+                                                {{ $unidade->nome }}
                                             </option>
                                         @endforeach
                                     </select>
